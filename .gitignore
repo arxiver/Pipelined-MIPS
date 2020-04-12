@@ -24,3 +24,10 @@ fp-info-cache
 # Exported BOM files
 *.xml
 *.csv
+# Modelsim files
+*.mpf
+/work
+*.vhd.bak
+*.cr.mti
+*.wlf
+
