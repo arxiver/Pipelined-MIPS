@@ -1,0 +1,47 @@
+#fetch_stage
+1-inputs 
+    #new PC
+    1-Correct branch address 
+    new name : correct_branch_address (after alu execution)
+    2-ADDRESS 2
+    new name : address2 (??????)
+    3-MUX 8 OUTPUT
+    new name :mux8_output
+    4-READ DATA 1
+    new name : read_data_1
+    5-Predicted branch addr
+    new name : predicted_branch_address
+
+    #selectors for the decoder    
+    1-MISS PREDICTED
+    new name : miss_prediction
+    2-INT FSM
+    new name :int_fsm
+    3-FUNCTION
+    new name:func
+    4-BRANCH
+    new name :branch
+    5-BRANCH PREDICTION
+    new_name : branch_prediction
+    6-STALLING
+    new name : stalling
+    7-normal    
+
+2-signals(register)
+    #a fininte state machine first 16 bit and seconde 16 bit
+    if the istruction is always 16 bit so the state will remain on  the first 16 bit
+    if the instruction is 32 bit go from first 16 bit to the second 16 bit and riase a wait signal (an output signal to other modeuls)
+    dealing with 
+
+3-output
+    7-PC
+    8-memory_enable
+    9-wait one cycle to fetch another 16 bit from memory
+    10-IR (32 bit the corresponding to a 2 16 bit or 1 16 bit and the remaining is 0)
+
+logic 
+at every clk cycle see signal and fetch 16 bit from memory with the value of PC
+if state is first 16 bit check for type of operation if 32 bit raise a wait signal and fetch the 16 bit in
+first 16 bit in IR
+if(state is second 16 bit wait drop the signal and wait for 16 bit from memory and put the in second 16 bit in IR (MSB)
+)    
