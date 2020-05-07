@@ -17,11 +17,7 @@ begin
 process (clk,reset,enable)
 begin
 if (reset = '1') then q <= (OTHERS => '0');
-<<<<<<< HEAD
-elsif (rising_edge(clk)) and enable = '1' then q <= d;
-=======
 elsif (falling_edge(clk)) and enable = '1' then q <= d;
->>>>>>> 65cf80cfdc900cb5f75f3d0c0283f082ce584b6b
 end if;
 end process;
 

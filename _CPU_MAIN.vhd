@@ -4,6 +4,7 @@ entity CPU_MAIN is
 port (
 GLOBAL_ENABLE : in std_logic;
 GLOBAL_RESET : in std_logic;
+GLOBAL_INITAIL : in std_logic;
 CLK : in std_logic 
 );
 end entity;
@@ -67,6 +68,35 @@ EA_IMM_DATA : out std_logic_vector (31 downto 0)
 
 );
 end component;       
+
+component fetch_buffer is 
+port(    
+    clk : in std_logic ; 
+	reset_global : in std_logic ; 
+    enable_global : in std_logic ; 
+    IR_enable :in std_logic;
+    IR_reset : in std_logic;
+    IR_in : in std_logic_vector(31 downto 0);
+    IR_out	: out std_logic_vector(31 downto 0);
+    PC_enable :in std_logic;
+    PC_reset : in std_logic;
+    PC_in : in std_logic_vector(15 downto 0);
+    PC_out	: out std_logic_vector(15 downto 0)    
+);
+end component;
+
+component fetch_stage is
+    generic (n:integer := 16);
+    port(       
+            initial : in std_logic;
+            Clk ,reset,buffer_enable : in std_logic;
+            correct_branch_address,address2,mux8_output,read_data_1,predicted_branch_address : in std_logic_vector(15 downto 0);
+            miss_prediction,int_fsm,func,branch,branch_prediction,stalling : in std_logic;                    
+            hold_to_complete_out :out std_logic;
+            out_IR :out  std_logic_vector(31 downto 0);    
+            out_PC :out  std_logic_vector(15 downto 0)    
+        );
+end component;
 
 component ID_EX is
 port (
@@ -158,13 +188,11 @@ signal IDEX_Rsrc2_OUT :  std_logic_vector (31 downto 0);
 signal IDEX_EA_IMM_DATA_OUT :  std_logic_vector (31 downto 0);
 signal IDEX_Rdst_address_OUT :  std_logic_vector (2 downto 0);
 signal IDEX_Rsrc1_address_OUT :  std_logic_vector (2 downto 0);
-signal IDEX_Rsrc2_address_OUT :  std_logic_vector (2 downto 0);
+signal IDEX_Rsrc2_address_OUT :  std_logic_vector (2 downto 0); 
 ------------------------------------------------------------
 
 
---------------------    IF/ID   ----------------------------
-signal IFID_IR :  std_logic_vector (31 downto 0);
-------------------------------------------------------------
+
 
 --------------------    MEM/WB   ----------------------------
 signal WB_WR_ADDRESS_1 :  std_logic_vector (2 downto 0);
@@ -182,8 +210,54 @@ signal DS_RD_DATA_1_OUT,DS_RD_DATA_2_OUT : std_logic_vector (31 downto 0);
 
 ---------------------  GLOBAL ------------------------------
 signal GLOBAL_PC :  std_logic_vector (31 downto 0);
+signal ZERO_LOGIC_16 : std_logic_vector(15 downto 0):="0000000000000000";
 ------------------------------------------------------------
+
+--------------------    IF/ID   ----------------------------
+signal IFID_IR :  std_logic_vector (31 downto 0);
+signal IFID_PC :  std_logic_vector (15 downto 0);
+signal FS_IR :  std_logic_vector (31 downto 0);
+signal FS_PC :  std_logic_vector (15 downto 0);
+signal IFID_BUFFER_ENABLE :std_logic;
+------------------------------------------------------------
+
 begin
+
+-- first stage : FETCH STAGE
+FETCH_STAGE_INSTANCE : fetch_stage port map(
+    initial => GLOBAL_INITAIL,
+    Clk  => CLK ,
+    reset => GLOBAL_RESET,
+    buffer_enable => IFID_BUFFER_ENABLE ,
+    correct_branch_address => ZERO_LOGIC_16,
+    address2 => ZERO_LOGIC_16,
+    mux8_output => ZERO_LOGIC_16,
+    read_data_1 =>ZERO_LOGIC_16,
+    predicted_branch_address => ZERO_LOGIC_16,
+    miss_prediction => '0',
+    int_fsm => '0',
+    func =>'0',
+    branch => '0',
+    branch_prediction => '0',
+    stalling            => '0',
+    hold_to_complete_out => open, ---should be handled to wait for another fetch  
+    out_IR =>FS_IR ,
+    out_PC => FS_PC
+);
+--FIRST BUFFER: IF/ID BUFFER 
+FETCH_BUFFER_INSTANCE : fetch_buffer port map (
+    clk  => CLK ,
+	reset_global  => GLOBAL_RESET ,
+    enable_global  => IFID_BUFFER_ENABLE,
+    IR_enable  => GLOBAL_ENABLE,
+    IR_reset  => GLOBAL_RESET,
+    IR_in => FS_IR,
+    IR_out	 => IFID_IR,
+    PC_enable =>GLOBAL_ENABLE,
+    PC_reset =>GLOBAL_RESET,
+    PC_in => FS_PC,
+    PC_out	 => IFID_PC
+);
 ------------------------------------------------------------------
 CONTROL_UNIT_INSTANCE : control_unit port map (
     -- INPUTS 

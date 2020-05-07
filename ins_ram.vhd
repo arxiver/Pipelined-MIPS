@@ -8,7 +8,7 @@ use std.textio.all;
 
 entity ins_ram is
     port(
-            Initial :inout std_logic;
+            Initial :in std_logic;
             Clk,Wr,Re : in std_logic;
             PC : in std_logic_vector(15 downto 0);
             DataIn: in std_logic_vector(15 downto 0);
@@ -36,8 +36,7 @@ begin
                 read(L, Instruction);
                 Ram(Count) <= Instruction;
                 Count := Count + 1;
-            end loop;
-            Initial <= '0';
+            end loop;          
             File_Close (F);
         
         else        
