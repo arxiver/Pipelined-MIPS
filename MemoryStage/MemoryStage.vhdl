@@ -69,28 +69,32 @@ SIGNAL MemWSignal: std_logic;
 -- SIGNAL Int,IncrementOrDecrement,SPSignal,MemW,MemR,Call: std_logic;
 
 BEGIN
-    SMux6 <= (not Int) and IncrementOrDecrement;
-    SMux7 <= SPSignal or Int;
-
-    SPIncrement <= SPIncrement+1;
-    PCIncrement <= PCIncrement+1;
-
-    MemWSignal <= MemW or Int;
-
-    -- CONTROL SIGNALS 
-
 
     -- MUXES
     Mux6 : Mux21Ent port map(SMux6,SP,SPIncrement,OutMux6);
     Mux7 : Mux21Ent port map(SMux7,ALUResult,OutMux6,OutMux7);
-    Mux8 : Mux41Ent port map(Call,Int,DataRead2,PC,PCIncrement,(others => '0'));
+    Mux8 : Mux41Ent port map(Call,Int,DataRead2,PC,PCIncrement,(others => '0'),OutMux8);
 
     -- RAM
-    Ram1 : RamEnt port map(Clk,MemW,MemWSignal,OutMux7,OutMux8,MemOut);
+    Ram1 : RamEnt port map(Clk,MemWSignal,MemR,OutMux7,OutMux8,MemOut);
 
-    -- Outputs
-    SPOut <= OutMux6;
-    ALUResultOut <= ALUResult;
-    ControlSignalsOut <= ControlSignals;
+    PROCESS(Clk) BEGIN 
+        IF(rising_edge(Clk) AND Enable='1') THEN
+            SMux6 <= (NOT Int) AND IncrementOrDecrement;
+            SMux7 <= SPSignal OR Int;
+
+            SPIncrement <= SP+1;
+            PCIncrement <= PC+1;
+
+            MemWSignal <= MemW OR Int;
+
+            -- CONTROL SIGNALS 
+
+            -- Outputs
+            SPOut <= OutMux6;
+            ALUResultOut <= ALUResult;
+            ControlSignalsOut <= ControlSignals;
+        END IF;
+    END PROCESS;
     
 END ARCHITECTURE;

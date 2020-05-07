@@ -15,7 +15,7 @@ PORT (
 END ENTITY;
 
 
-ARCHITECTURE Mux21Arch OF Mux21Ent IS BEGIN
+ARCHITECTURE Mux41Arch OF Mux41Ent IS BEGIN
 
     F <= IN0  when s1 = '0' and s0 = '0'
     ELSE IN1  when s1 = '0' and s0 = '1'

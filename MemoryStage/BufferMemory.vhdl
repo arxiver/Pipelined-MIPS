@@ -8,16 +8,29 @@ ENTITY MemBufferEnt IS
                 n : integer := 32
             ); 
     PORT ( 
-            s0: IN STD_LOGIC ;
-            IN0,IN1 : IN std_logic_vector(n-1 downto 0);
-            F : OUT std_logic_vector(n-1 downto 0)
+            Clk,Reset,Enable : IN std_logic;
+            SP,ControlSignals,MemOut,ALUResult : IN std_logic_vector(n-1 DOWNTO 0);
+            SPOut,ControlSignalsOut,MemOutOut,ALUResultOut : OUT std_logic_vector(n-1 DOWNTO 0)
         );
 END ENTITY;
 
 
-ARCHITECTURE MemBufferArch OF MemBufferEnt IS BEGIN
+ARCHITECTURE MemBufferArch OF MemBufferEnt IS 
+COMPONENT RegEnt IS 
+PORT(	
+    Clk     : IN std_logic ; 
+	Reset   : IN std_logic ; 
+	Enable  : IN std_logic ; 
+	Input	: IN std_logic_vector(n-1 DOWNTO 0);
+	Output	: OUT std_logic_vector(n-1 DOWNTO 0)
+);
+END COMPONENT;
 
-    F <= IN0  when s0 = '0'
-    ELSE IN1  WHEN s0 = '1';
+BEGIN
+
+    SPBuffer              : RegEnt PORT MAP(Clk,Reset,Enable,SP,SPOut);
+    ControlSignalsBuffer  : RegEnt PORT MAP(Clk,Reset,Enable,ControlSignals,ControlSignalsOut);
+    MemOutBuffer          : RegEnt PORT MAP(Clk,Reset,Enable,MemOut,MemOutOut);
+    ALUResultBuffer       : RegEnt PORT MAP(Clk,Reset,Enable,ALUResult,ALUResultOut);
 
 END ARCHITECTURE;
