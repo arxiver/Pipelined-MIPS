@@ -150,6 +150,33 @@ Rsrc1_address_OUT : out std_logic_vector (2 downto 0);
 Rsrc2_address_OUT : out std_logic_vector (2 downto 0)
 );
 end component;
+
+-------------------------- Memory Stage component -----------------------------
+COMPONENT MemoryEnt IS
+    PORT(
+            --  For entity
+            Clk,Enable: IN std_logic;
+
+            -- Signals
+            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            -- Int,Call: IN std_logic;
+
+            -- Addresses 
+            PC,SP,ALUResult: IN std_logic_vector(31 DOWNTO 0);
+
+            -- Data
+            DataRead2: IN std_logic_vector(31 DOWNTO 0);
+
+            -- Outputs
+            MemOut: OUT std_logic_vector(31 DOWNTO 0);
+            SPOut: OUT std_logic_vector(31 DOWNTO 0);
+            ALUResultOut: OUT std_logic_vector(31 DOWNTO 0);
+            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0)
+
+        );
+END COMPONENT;
+-----------------------------------------------------------------------
+
 --------------------   SIGNALS   ------------------------
 
 --------------------    CU   ----------------------------
@@ -220,6 +247,13 @@ signal FS_IR :  std_logic_vector (31 downto 0);
 signal FS_PC :  std_logic_vector (15 downto 0);
 signal IFID_BUFFER_ENABLE :std_logic;
 ------------------------------------------------------------
+
+---------------------- Memory Stage -------------------------
+SIGNAL MemOut: std_logic_vector(31 DOWNTO 0);
+SIGNAL SPOut: std_logic_vector(31 DOWNTO 0);
+SIGNAL ALUResultOut: std_logic_vector(31 DOWNTO 0);
+SIGNAL ControlSignalsOut: std_logic_vector(26 DOWNTO 0);
+-------------------------------------------------------------
 
 begin
 
@@ -362,5 +396,19 @@ ID_EX_INSTANCE : ID_EX port map (
     );
 
 ------------------------------------------------------------------
+
+----------------------- Memory Stage ------------------------------
+MemoryStage : MemoryEnt PORT MAP(CLK, 
+                                '1', -- ENABLE 
+                                "000000000000000000000000000", -- CONTROL SIGNAL 
+                                "00000000000000000000000000000000", -- PC
+                                "00000000000000000000000000000000", -- SP
+                                "00000000000000000000000000000000", -- ALU RESULT
+                                "00000000000000000000000000000000", -- DATA READ 2
+                                MemOut,
+                                SPOut,
+                                ALUResultOut,
+                                ControlSignalsOut
+                                ); 
 
 end architecture;
