@@ -17,7 +17,7 @@ BEGIN
     PROCESS (Clk,Reset,Enable)
     BEGIN
         IF (Reset = '1') THEN Output <= (OTHERS => '0');
-        ELSIF (rising_edge(Clk)) AND Enable = '1' THEN Output <= Input;
+        ELSIF (falling_edge(Clk)) AND Enable = '1' THEN Output <= Input;
         END IF;
     END PROCESS;
 END ARCHITECTURE;

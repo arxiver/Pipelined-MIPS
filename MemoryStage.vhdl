@@ -20,10 +20,18 @@ ENTITY MemoryEnt IS
             -- Addresses 
             PC,SP,ALUResult: IN std_logic_vector(n-1 DOWNTO 0);
 
+            RDes : IN std_logic_vector(2 DOWNTO 0);
+            RSrc1 : IN std_logic_vector(2 DOWNTO 0);
+            RSrc2 : IN std_logic_vector(2 DOWNTO 0);
+
             -- Data
             DataRead2: IN std_logic_vector(n-1 DOWNTO 0);
 
             -- Outputs
+            RDesOut : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
+
             MemOut: OUT std_logic_vector(n-1 DOWNTO 0);
             SPOut: OUT std_logic_vector(n-1 DOWNTO 0);
             ALUResultOut: OUT std_logic_vector(n-1 DOWNTO 0);
@@ -100,6 +108,10 @@ BEGIN
             MemWSignal <= MemW OR Int;
 
             -- Outputs
+            RDesOut <= RDes;
+            RSrcOut1 <= RSrc1;
+            RSrcOut2 <= RSrc2;
+
             SPOut <= OutMux6;
             ALUResultOut <= ALUResult;
             ControlSignalsOut <= ControlSignals;

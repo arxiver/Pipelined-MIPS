@@ -235,10 +235,18 @@ COMPONENT MemoryEnt IS
             -- Addresses 
             PC,SP,ALUResult: IN std_logic_vector(31 DOWNTO 0);
 
+            RDes : IN std_logic_vector(2 DOWNTO 0);
+            RSrc1 : IN std_logic_vector(2 DOWNTO 0);
+            RSrc2 : IN std_logic_vector(2 DOWNTO 0);
+
             -- Data
             DataRead2: IN std_logic_vector(31 DOWNTO 0);
 
             -- Outputs
+            RDesOut : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
+
             MemOut: OUT std_logic_vector(31 DOWNTO 0);
             SPOut: OUT std_logic_vector(31 DOWNTO 0);
             ALUResultOut: OUT std_logic_vector(31 DOWNTO 0);
@@ -256,7 +264,16 @@ COMPONENT MemBufferEnt IS
             ControlSignals : IN std_logic_vector(26 DOWNTO 0);
             SP,MemOut,ALUResult : IN std_logic_vector(31 DOWNTO 0);
 
+            RDes : IN std_logic_vector(2 DOWNTO 0);
+            RSrc1 : IN std_logic_vector(2 DOWNTO 0);
+            RSrc2 : IN std_logic_vector(2 DOWNTO 0);
+
             -- Outputs
+
+            RDesOut : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
+
             ControlSignalsOut: OUT std_logic_vector(26 DOWNTO 0);
             SPOut,MemOutOut,ALUResultOut : OUT std_logic_vector(31 DOWNTO 0)
         );
@@ -279,11 +296,20 @@ COMPONENT WBEnt IS
             -- Data
             MemOut,ALUResult: IN std_logic_vector(31 DOWNTO 0);
 
+            RDes : IN std_logic_vector(2 DOWNTO 0);
+            RSrc1 : IN std_logic_vector(2 DOWNTO 0);
+            RSrc2 : IN std_logic_vector(2 DOWNTO 0);
+
             -- Outputs
+            RDesOut : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
+
             ControlSignalsOut : OUT std_logic_vector(26 DOWNTO 0);
             IntOut : OUT std_logic;
-            Mux10Out, SPOut : OUT std_logic_vector(31 DOWNTO 0)
+            Mux10Out, SPOut : OUT std_logic_vector(31 DOWNTO 0);
 
+            WRE : OUT std_logic
         );
 END COMPONENT;
 
@@ -405,18 +431,30 @@ SIGNAL EX_MEM_BUFFER_WRITE : std_logic;
 ---------------------------------------------------------------
 
 ---------------------- Memory Stage -------------------------
+SIGNAL RDesOutMemory : std_logic_vector(2 DOWNTO 0);
+SIGNAL RSrcOut1Memory : std_logic_vector(2 DOWNTO 0);
+SIGNAL RSrcOut2Memory : std_logic_vector(2 DOWNTO 0);
+
 SIGNAL MemOutMemory: std_logic_vector(31 DOWNTO 0);
 SIGNAL SPOutMemory: std_logic_vector(31 DOWNTO 0);
 SIGNAL ALUResultOutMemory: std_logic_vector(31 DOWNTO 0);
 SIGNAL ControlSignalsOutMemory: std_logic_vector(26 DOWNTO 0);
 
 ----------------------- Memory Buffer ------------------------
+SIGNAL RDesOutBuffer : std_logic_vector(2 DOWNTO 0);
+SIGNAL RSrcOut1Buffer : std_logic_vector(2 DOWNTO 0);
+SIGNAL RSrcOut2Buffer : std_logic_vector(2 DOWNTO 0);
+
 SIGNAL ControlSignalsOutBuffer : std_logic_vector(26 DOWNTO 0);
 SIGNAL SPOutBuffer : std_logic_vector(31 DOWNTO 0);
 SIGNAL MemOutBuffer: std_logic_vector(31 DOWNTO 0);
 SIGNAL ALUResultOutBuffer : std_logic_vector(31 DOWNTO 0);
 
 ------------------------ WB Stage -----------------------
+SIGNAL RDesOutWB : std_logic_vector(2 DOWNTO 0);
+SIGNAL RSrcOut1WB : std_logic_vector(2 DOWNTO 0);
+SIGNAL RSrcOut2WB : std_logic_vector(2 DOWNTO 0);
+
 SIGNAL ControlSignalsOutWB : std_logic_vector(26 DOWNTO 0);
 SIGNAL Mux10OutWB : std_logic_vector(31 DOWNTO 0);
 SIGNAL SPOutWB : std_logic_vector(31 DOWNTO 0);
@@ -659,10 +697,10 @@ MemoryStage : MemoryEnt PORT MAP(
                                     -- "000000000000000000000000000", -- CONTROL SIGNAL 
                                     -- '0',    -- Int
                                     -- '0',    -- call
-                                    -- "00000000000000000000000000000000", -- PC
-                                    -- "00000000000000000000000000000000", -- SP
-                                    -- "00000000000000000000000000000000", -- ALU RESULT
-                                    -- "00000000000000000000000000000000", -- DATA READ 2
+                                    -- "00000000000000000000000000000001", -- PC
+                                    -- "00000000000000000000000000000010", -- SP
+                                    -- "00000000000000000000000000000100", -- ALU RESULT
+                                    -- "00000000000000000000000000001000", -- DATA READ 2
 
                                     -- Data from nassar
                                     EXMEM_CONTROL_SIGNALS_OUT,
@@ -671,9 +709,17 @@ MemoryStage : MemoryEnt PORT MAP(
                                     EXMEM_PC_OUT,
                                     "00000000000000000000000000000000",
                                     EXMEM_ALU_RESULT_OUT,
+
+                                    EXMEM_Rdst_address_OUT ,
+                                    EXMEM_Rsrc1_address_OUT ,
+                                    EXMEM_Rsrc2_address_OUT ,
+
                                     EXMEM_Rsrc2_OUT,
 
                                     -- Outputs
+                                    RDesOutMemory,
+                                    RSrcOut1Memory,
+                                    RSrcOut2Memory,
                                     MemOutMemory,
                                     SPOutMemory,
                                     ALUResultOutMemory,
@@ -691,7 +737,14 @@ MemoryBuffer : MemBufferEnt PORT MAP(
                                         MemOutMemory,
                                         ALUResultOutMemory,
 
+                                        RDesOutMemory,
+                                        RSrcOut1Memory,
+                                        RSrcOut2Memory,
+
                                         -- Outputs
+                                        RDesOutBuffer,
+                                        RSrcOut1Buffer,
+                                        RSrcOut2Buffer,
                                         ControlSignalsOutBuffer,
                                         SPOutBuffer,
                                         MemOutBuffer,
@@ -706,10 +759,20 @@ WBStage : WBEnt PORT MAP(
                             SPOutBuffer,
                             MemOutBuffer,
                             ALUResultOutBuffer,
+
+                            RDesOutBuffer,
+                            RSrcOut1Buffer,
+                            RSrcOut2Buffer,
+
+                            WB_WR_ADDRESS_1,
+                            RSrcOut1WB,
+                            RSrcOut2WB,
+
                             ControlSignalsOutWB,
                             IntOutWB,
-                            Mux10OutWB,
-                            SPOutWB
+                            WB_WR_DATA_1,
+                            SPOutWB,
+                            WB_WR_EN_1
 );
 
 end architecture;

@@ -13,7 +13,15 @@ ENTITY MemBufferEnt IS
             ControlSignals : IN std_logic_vector(26 DOWNTO 0);
             SP,MemOut,ALUResult : IN std_logic_vector(n-1 DOWNTO 0);
 
+            RDes : IN std_logic_vector(2 DOWNTO 0);
+            RSrc1 : IN std_logic_vector(2 DOWNTO 0);
+            RSrc2 : IN std_logic_vector(2 DOWNTO 0);
+
             -- Outputs
+            RDesOut : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
+
             ControlSignalsOut: OUT std_logic_vector(26 DOWNTO 0);
             SPOut,MemOutOut,ALUResultOut : OUT std_logic_vector(n-1 DOWNTO 0)
         );
@@ -38,5 +46,9 @@ BEGIN
     ControlSignalsBuffer  : RegEnt GENERIC MAP(27) PORT MAP(Clk,Reset,Enable,ControlSignals,ControlSignalsOut);
     MemOutBuffer          : RegEnt GENERIC MAP(32) PORT MAP(Clk,Reset,Enable,MemOut,MemOutOut);
     ALUResultBuffer       : RegEnt GENERIC MAP(32) PORT MAP(Clk,Reset,Enable,ALUResult,ALUResultOut);
+
+    RDesModule        : RegEnt GENERIC MAP(3) PORT MAP(Clk,Reset,Enable,RDes,RDesOut);
+    RSrc1Module       : RegEnt GENERIC MAP(3) PORT MAP(Clk,Reset,Enable,RSrc1,RSrcOut1);
+    RSrc2Module       : RegEnt GENERIC MAP(3) PORT MAP(Clk,Reset,Enable,RSrc2,RSrcOut2);
 
 END ARCHITECTURE;

@@ -23,10 +23,19 @@ ENTITY WBEnt IS
             -- Data
             MemOut,ALUResult: IN std_logic_vector(n-1 DOWNTO 0);
 
+            RDes  : IN std_logic_vector(2 DOWNTO 0);
+            RSrc1 : IN std_logic_vector(2 DOWNTO 0);
+            RSrc2 : IN std_logic_vector(2 DOWNTO 0);
+
             -- Outputs
+            RDesOut : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
+            RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
+
             ControlSignalsOut : OUT std_logic_vector(26 DOWNTO 0);
             IntOut : OUT std_logic;
-            Mux10Out, SPOut : OUT std_logic_vector(n-1 DOWNTO 0)
+            Mux10Out, SPOut : OUT std_logic_vector(n-1 DOWNTO 0);
+            WRE : OUT std_logic
 
         );
 END ENTITY;
@@ -64,8 +73,10 @@ BEGIN
             SPDecrement <= SP-1;
 
             -- Outputs
+            RDesOut <= RDes;
             IntOut <= Int;
             ControlSignalsOut <= ControlSignals;
+            WRE <= ControlSignals(10);
         END IF;
     END PROCESS;
     
