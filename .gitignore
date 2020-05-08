@@ -36,4 +36,4 @@ fp-info-cache
 /MemoryStage
 
 *.vstf
-*wlf*
+**wlf*
