@@ -4,7 +4,7 @@ USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.all;
 
 
-ENTITY MemoryEnt IS
+ENTITY WBEnt IS
     GENERIC(
             n : integer := 32
         ); 
@@ -14,8 +14,8 @@ ENTITY MemoryEnt IS
             Clk,Enable: IN std_logic;
 
             -- Signals
-            ControlSignals : IN std_logic_vector(n-1 DOWNTO 0);
-            Int,IncrementOrDecrement,SPSignal,MemToReg, OutSignal: IN std_logic;
+            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            Int: IN std_logic;
 
             -- SP 
             SP : IN std_logic_vector(n-1 DOWNTO 0);
@@ -24,14 +24,15 @@ ENTITY MemoryEnt IS
             MemOut,ALUResult: IN std_logic_vector(n-1 DOWNTO 0);
 
             -- Outputs
-            OutSignalOut : OUT std_logic;
-            Mux10Out, SPOut : OUT std_logic_vector(n-1 DOWNTO 0);
+            ControlSignalsOut : OUT std_logic_vector(26 DOWNTO 0);
+            IntOut : OUT std_logic;
+            Mux10Out, SPOut : OUT std_logic_vector(n-1 DOWNTO 0)
 
         );
 END ENTITY;
 
 
-ARCHITECTURE MemoryArch OF MemoryEnt IS 
+ARCHITECTURE WBArch OF WBEnt IS 
 COMPONENT Mux21Ent IS
 PORT ( 
         s0: IN STD_LOGIC ;
@@ -42,32 +43,28 @@ END COMPONENT;
 
 
 SIGNAL SPDecrement: std_logic_vector(n-1 DOWNTO 0);
-SIGNAL SMux9,STriState : std_logic;
-SIGNAL OutMux9 : std_logic_vector(n-1 DOWNTO 0);
-SIGNAL MemWSignal: std_logic;
+SIGNAL SMux9 : std_logic;
 
 -- CONTROL SIGNALS
--- SIGNAL Int,IncrementOrDecrement,SPSignal,MemW,MemR,Call: std_logic;
+SIGNAL IncOrDec,MemToReg: std_logic;
 
 BEGIN
 
     -- MUXES
-    Mux9    : Mux21Ent port map(SMux9,SPDecrement,SP,OutMux9);
+    Mux9    : Mux21Ent port map(SMux9,SPDecrement,SP,SPOut);
     Mux10   : Mux21Ent port map(MemToReg,ALUResult,MemOut,Mux10Out);
 
     PROCESS(Clk) BEGIN 
         IF(rising_edge(Clk) AND Enable='1') THEN
-            SMux9 <= (NOT Int) OR IncrementOrDecrement;
+            -- Signals 
+            IncOrDec <= ControlSignals(17);
+            MemToReg <= ControlSignals(8);
+
+            SMux9 <= (NOT Int) OR IncOrDec;
             SPDecrement <= SP-1;
 
-
-            MemWSignal <= MemW OR Int;
-
-            -- CONTROL SIGNALS 
-
             -- Outputs
-            SPOut <= OutMux6;
-            ALUResultOut <= ALUResult;
+            IntOut <= Int;
             ControlSignalsOut <= ControlSignals;
         END IF;
     END PROCESS;

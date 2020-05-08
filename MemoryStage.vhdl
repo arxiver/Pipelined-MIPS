@@ -15,7 +15,7 @@ ENTITY MemoryEnt IS
 
             -- Signals
             ControlSignals : IN std_logic_vector(26 DOWNTO 0);
-            -- Int,Call: IN std_logic;
+            Int,Call: IN std_logic;
 
             -- Addresses 
             PC,SP,ALUResult: IN std_logic_vector(n-1 DOWNTO 0);
@@ -66,7 +66,7 @@ SIGNAL PCIncrement,SPIncrement: std_logic_vector(n-1 DOWNTO 0);
 SIGNAL MemWSignal: std_logic;
 
 -- CONTROL SIGNALS
-SIGNAL Int,IncrementOrDecrement,SPSignal,MemW,MemR,Call: std_logic;
+SIGNAL IncrementOrDecrement,SPSignal,MemW,MemR: std_logic;
 
 BEGIN
 
@@ -81,8 +81,8 @@ BEGIN
     PROCESS(Clk) BEGIN 
         IF(rising_edge(Clk) AND Enable='1') THEN
             -- CONTROL SIGNALS ASSIGNMENT
-            Int <= '0';
-            Call <= '0';
+            -- Int <= '0';
+            -- Call <= '0';
             IncrementOrDecrement <= ControlSignals(17);
             SPSignal <= ControlSignals(16);
             MemW <= ControlSignals(13);
