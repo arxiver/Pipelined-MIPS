@@ -35,3 +35,5 @@ fp-info-cache
 # Sofyan Files 
 /MemoryStage
 
+*.vstf
+*wlf*
