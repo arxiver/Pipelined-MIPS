@@ -10,7 +10,7 @@ entity ins_ram is
     port(
             Initial :in std_logic;
             Clk,Wr,Re : in std_logic;
-            PC : in std_logic_vector(15 downto 0);
+            PC : in std_logic_vector(31 downto 0);
             DataIn: in std_logic_vector(15 downto 0);
             DataOut : out std_logic_vector(15 downto 0)
         );

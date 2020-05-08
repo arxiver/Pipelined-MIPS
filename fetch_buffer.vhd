@@ -12,8 +12,8 @@ port(
     IR_out	: out std_logic_vector(31 downto 0);
     PC_enable :in std_logic;
     PC_reset : in std_logic;
-    PC_in : in std_logic_vector(15 downto 0);
-    PC_out	: out std_logic_vector(15 downto 0)    
+    PC_in : in std_logic_vector(31 downto 0);
+    PC_out	: out std_logic_vector(31 downto 0)    
 );
 end entity;
 architecture fetch_buffer_arch of fetch_buffer is
@@ -37,6 +37,6 @@ architecture fetch_buffer_arch of fetch_buffer is
     enable_PC_full <=enable_global and PC_enable;
     IR :reg generic map(n => 32)       
         port map(clk,reset_IR_full,enable_IR_full,IR_in,IR_out);
-    PC :reg generic map(n => 16)       
+    PC :reg generic map(n => 32)       
         port map(clk,reset_PC_full,enable_PC_full,PC_in,PC_out);
 end architecture;

@@ -80,8 +80,8 @@ port(
     IR_out	: out std_logic_vector(31 downto 0);
     PC_enable :in std_logic;
     PC_reset : in std_logic;
-    PC_in : in std_logic_vector(15 downto 0);
-    PC_out	: out std_logic_vector(15 downto 0)    
+    PC_in : in std_logic_vector(31 downto 0);
+    PC_out	: out std_logic_vector(31 downto 0)    
 );
 end component;
 
@@ -94,7 +94,7 @@ component fetch_stage is
             miss_prediction,int_fsm,func,branch,branch_prediction,stalling : in std_logic;                    
             hold_to_complete_out :out std_logic;
             out_IR :out  std_logic_vector(31 downto 0);    
-            out_PC :out  std_logic_vector(15 downto 0)    
+            out_PC :out  std_logic_vector(31 downto 0)    
         );
 end component;
 
@@ -354,9 +354,9 @@ signal ZERO_LOGIC_16 : std_logic_vector(15 downto 0):="0000000000000000";
 
 --------------------    IF/ID   ----------------------------
 signal IFID_IR :  std_logic_vector (31 downto 0);
-signal IFID_PC :  std_logic_vector (15 downto 0);
+signal IFID_PC :  std_logic_vector (31 downto 0);
 signal FS_IR :  std_logic_vector (31 downto 0);
-signal FS_PC :  std_logic_vector (15 downto 0);
+signal FS_PC :  std_logic_vector (31 downto 0);
 ------------------------------------------------------------
 
 ---------------------Execute Stage----------------------------

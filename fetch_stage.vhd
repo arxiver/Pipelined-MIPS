@@ -15,7 +15,7 @@ entity fetch_stage is
             miss_prediction,int_fsm,func,branch,branch_prediction,stalling : in std_logic;                    
             hold_to_complete_out :out std_logic;
             out_IR :out  std_logic_vector(31 downto 0);    
-            out_PC :out  std_logic_vector(15 downto 0)   
+            out_PC :out  std_logic_vector(31 downto 0)   
         );
 end entity;
 
@@ -25,7 +25,7 @@ component ins_ram is
     port(
             Initial :in std_logic;
             Clk,Wr,Re : in std_logic;
-            PC : in std_logic_vector(15 downto 0);
+            PC : in std_logic_vector(31 downto 0);
             DataIn: in std_logic_vector(15 downto 0);
             DataOut : out std_logic_vector(15 downto 0)           
         );
@@ -34,7 +34,7 @@ end component;
 
    signal IR : std_logic_vector(31 downto 0);     
    signal bit_IR_16 : std_logic_vector(15 downto 0);
-   signal PC :std_logic_vector(15 downto 0);
+   signal PC :std_logic_vector(31 downto 0);
    signal IR_enable : std_logic;
    signal IR_reset : std_logic;
    signal PC_enable : std_logic;
