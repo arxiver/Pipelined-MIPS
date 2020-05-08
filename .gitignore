@@ -30,5 +30,5 @@ fp-info-cache
 *.vhd.bak
 *.cr.mti
 *.wlf
-
+*.vstf
 *wlf*
