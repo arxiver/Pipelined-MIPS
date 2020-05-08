@@ -63,8 +63,8 @@ BEGIN
     Mux9    : Mux21Ent port map(SMux9,SPDecrement,SP,SPOut);
     Mux10   : Mux21Ent port map(MemToReg,ALUResult,MemOut,Mux10Out);
 
-    PROCESS(Clk) BEGIN 
-        IF(rising_edge(Clk) AND Enable='1') THEN
+ --   PROCESS(Clk) BEGIN 
+  --      IF(rising_edge(Clk) AND Enable='1') THEN
             -- Signals 
             IncOrDec <= ControlSignals(17);
             MemToReg <= ControlSignals(8);
@@ -77,7 +77,7 @@ BEGIN
             IntOut <= Int;
             ControlSignalsOut <= ControlSignals;
             WRE <= ControlSignals(10);
-        END IF;
-    END PROCESS;
+  --      END IF;
+  --  END PROCESS;
     
 END ARCHITECTURE;
