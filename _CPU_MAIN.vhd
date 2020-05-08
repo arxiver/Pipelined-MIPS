@@ -150,6 +150,37 @@ Rsrc1_address_OUT : out std_logic_vector (2 downto 0);
 Rsrc2_address_OUT : out std_logic_vector (2 downto 0)
 );
 end component;
+
+
+
+
+component Execute_Stage_Entity is 
+port(
+--ID/EX INPUTS
+PC_Rdst_Data_In,Control_Signals_In,Read_Data1_In
+,Read_Data2_In,Extend_Mux_Output: in std_logic_vector (31 downto 0) ;
+DST_SRC_Addresses_In: in std_logic_vector (5 downto 0) ; 
+
+--EX/MEM Outputs
+PC_Rdst_Data_Out,Control_Signals_Out,ALU_Result_Out,Read_Data2_Out: out std_logic_vector (31 downto 0) ;
+DST_SRC_Addresses_Out: out std_logic_vector (5 downto 0) ; 
+
+--Forwarding data
+Mem_Forwarding , WB_Forwarding: in std_logic_vector (31 downto 0) ;
+
+--Forwarding unit selectors
+Forwarding_Selectors1,Forwarding_Selectors2 : in std_logic_vector (1 downto 0) ;
+
+--In Port Data
+In_Port: in std_logic_vector (31 downto 0) ;
+
+--flags
+flags : inout std_logic_vector (3 downto 0) ; 
+
+--clk , enable , reset
+clk,Enable,Reset: in std_logic);
+
+end component Execute_Stage_Entity;
 --------------------   SIGNALS   ------------------------
 
 --------------------    CU   ----------------------------
