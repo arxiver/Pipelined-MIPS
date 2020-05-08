@@ -151,6 +151,77 @@ Rsrc2_address_OUT : out std_logic_vector (2 downto 0)
 );
 end component;
 
+
+-------------------------- Execute Stage component -----------------------------
+component Execute_Stage_Entity is 
+port(
+--ID/EX INPUTS
+IDEX_CONTROL_SIGNALS :in std_logic_vector (26 downto 0);
+IDEX_PC :in  std_logic_vector (31 downto 0);
+IDEX_Rdst :in  std_logic_vector (31 downto 0);
+IDEX_Rsrc1 :in  std_logic_vector (31 downto 0);
+IDEX_Rsrc2 :in  std_logic_vector (31 downto 0);
+IDEX_EA_IMM_DATA :in  std_logic_vector (31 downto 0);
+IDEX_Rdst_address :in  std_logic_vector (2 downto 0);
+IDEX_Rsrc1_address :in  std_logic_vector (2 downto 0);
+IDEX_Rsrc2_address :in  std_logic_vector (2 downto 0); 
+
+--EX/MEM Outputs
+EXMEM_ALU_RESULT:out  std_logic_vector (31 downto 0);
+EXMEM_CONTROL_SIGNALS :out std_logic_vector (26 downto 0);
+EXMEM_PC :out  std_logic_vector (31 downto 0);
+EXMEM_Rdst :out  std_logic_vector (31 downto 0);
+EXMEM_Rsrc2 :out  std_logic_vector (31 downto 0);
+EXMEM_Rdst_address :out  std_logic_vector (2 downto 0);
+EXMEM_Rsrc1_address :out  std_logic_vector (2 downto 0);
+EXMEM_Rsrc2_address :out  std_logic_vector (2 downto 0); 
+
+--Forwarding data
+Mem_Forwarding , WB_Forwarding: in std_logic_vector (31 downto 0) ;
+
+--Forwarding unit selectors
+Forwarding_Selectors1,
+Forwarding_Selectors2 : in std_logic_vector (1 downto 0) ;
+
+--In Port Data
+In_Port: in std_logic_vector (31 downto 0) ;
+
+--flags
+flags : inout std_logic_vector (3 downto 0) ; 
+
+--clk , enable , reset
+clk,
+Enable,
+Reset: in std_logic);
+
+end component Execute_Stage_Entity;
+
+
+-------------------------- EXMEM BUFFER component -----------------------------
+
+component EX_Buffer_Entity is 
+port(
+EXMEM_ALU_RESULT_IN:in  std_logic_vector (31 downto 0);
+EXMEM_CONTROL_SIGNALS_IN :in std_logic_vector (26 downto 0);
+EXMEM_PC_IN :in  std_logic_vector (31 downto 0);
+EXMEM_Rdst_IN :in  std_logic_vector (31 downto 0);
+EXMEM_Rsrc2_IN :in  std_logic_vector (31 downto 0);
+EXMEM_Rdst_address_IN :in  std_logic_vector (2 downto 0);
+EXMEM_Rsrc1_address_IN :in  std_logic_vector (2 downto 0);
+EXMEM_Rsrc2_address_IN :in  std_logic_vector (2 downto 0); 
+
+EXMEM_ALU_RESULT_OUT:out  std_logic_vector (31 downto 0);
+EXMEM_CONTROL_SIGNALS_OUT :out std_logic_vector (26 downto 0);
+EXMEM_PC_OUT :out  std_logic_vector (31 downto 0);
+EXMEM_Rdst_OUT :out  std_logic_vector (31 downto 0);
+EXMEM_Rsrc2_OUT :out  std_logic_vector (31 downto 0);
+EXMEM_Rdst_address_OUT :out  std_logic_vector (2 downto 0);
+EXMEM_Rsrc1_address_OUT :out  std_logic_vector (2 downto 0);
+EXMEM_Rsrc2_address_OUT :out  std_logic_vector (2 downto 0); 
+
+Wr,clk,reset : in std_logic);
+end component EX_Buffer_Entity;
+
 -------------------------- Memory Stage component -----------------------------
 COMPONENT MemoryEnt IS
     PORT(
@@ -288,6 +359,50 @@ signal FS_IR :  std_logic_vector (31 downto 0);
 signal FS_PC :  std_logic_vector (15 downto 0);
 signal IFID_BUFFER_ENABLE :std_logic;
 ------------------------------------------------------------
+
+---------------------Execute Stage----------------------------
+--Execute Stage output
+SIGNAL EXMEM_ALU_RESULT : std_logic_vector(31 DOWNTO 0);
+SIGNAL EXMEM_CONTROL_SIGNALS : std_logic_vector(26 DOWNTO 0);
+SIGNAL EXMEM_PC  : std_logic_vector(31 DOWNTO 0);
+SIGNAL EXMEM_Rdst  : std_logic_vector(31 DOWNTO 0);
+SIGNAL EXMEM_Rsrc2  : std_logic_vector(31 DOWNTO 0);
+SIGNAL EXMEM_Rdst_address  : std_logic_vector(2 DOWNTO 0);
+SIGNAL EXMEM_Rsrc1_address  : std_logic_vector(2 DOWNTO 0);
+SIGNAL EXMEM_Rsrc2_address  : std_logic_vector(2 DOWNTO 0);
+
+--Forwarding data input
+SIGNAL Mem_Forwarding : std_logic_vector(31 DOWNTO 0);
+SIGNAL WB_Forwarding : std_logic_vector(31 DOWNTO 0);
+
+--Forwarding unit selectors inputs
+SIGNAL Forwarding_Selectors1 : std_logic_vector(1 DOWNTO 0);
+SIGNAL Forwarding_Selectors2  : std_logic_vector(1 DOWNTO 0);
+
+--In Port Data
+SIGNAL In_Port: std_logic_vector (31 downto 0) ;
+
+--flags
+SIGNAL flags : std_logic_vector (3 downto 0) ; 
+
+--Enable
+SIGNAL Execute_EN : std_logic ; 
+
+---------------------------------------------------------------
+
+-----------------------EX MEM Buffer------------------------------
+SIGNAL EXMEM_ALU_RESULT_OUT: std_logic_vector(31 DOWNTO 0);
+SIGNAL EXMEM_CONTROL_SIGNALS_OUT : std_logic_vector(26 DOWNTO 0);
+SIGNAL EXMEM_PC_OUT : std_logic_vector(31 DOWNTO 0);
+SIGNAL EXMEM_Rdst_OUT : std_logic_vector(31 DOWNTO 0);
+SIGNAL EXMEM_Rsrc2_OUT : std_logic_vector(31 DOWNTO 0);
+SIGNAL EXMEM_Rdst_address_OUT : std_logic_vector(2 DOWNTO 0);
+SIGNAL EXMEM_Rsrc1_address_OUT : std_logic_vector(2 DOWNTO 0);
+SIGNAL EXMEM_Rsrc2_address_OUT : std_logic_vector(2 DOWNTO 0);
+
+SIGNAL EX_MEM_BUFFER_WRITE : std_logic;
+
+---------------------------------------------------------------
 
 ---------------------- Memory Stage -------------------------
 SIGNAL MemOutMemory: std_logic_vector(31 DOWNTO 0);
@@ -448,6 +563,91 @@ ID_EX_INSTANCE : ID_EX port map (
     );
 
 ------------------------------------------------------------------
+
+
+
+----------------------- Execute Stage ------------------------------
+ExecuteStage : Execute_Stage_Entity PORT MAP (
+                                    --inputs
+                                    IDEX_OUT_CONTROL_SIGNALS,
+                                    IDEX_PC_OUT ,
+                                    IDEX_Rdst_OUT ,
+                                    IDEX_Rsrc1_OUT ,
+                                    IDEX_Rsrc2_OUT ,
+                                    IDEX_EA_IMM_DATA_OUT ,
+                                    IDEX_Rdst_address_OUT ,
+                                    IDEX_Rsrc1_address_OUT ,
+                                    IDEX_Rsrc2_address_OUT ,
+
+                                    --EX/MEM Outputs
+                                    EXMEM_ALU_RESULT ,
+                                    EXMEM_CONTROL_SIGNALS  ,
+                                    EXMEM_PC  ,
+                                    EXMEM_Rdst  ,
+                                    EXMEM_Rsrc2  ,
+                                    EXMEM_Rdst_address  ,
+                                    EXMEM_Rsrc1_address  ,
+                                    EXMEM_Rsrc2_address  ,
+
+                                    --forwarded data
+                                    Mem_Forwarding ,
+                                    WB_Forwarding ,
+
+                                    --forwarding unit selectors
+                                    Forwarding_Selectors1 ,
+                                    Forwarding_Selectors2 ,
+
+                                    --in port data
+                                    In_Port ,
+                                    
+                                    --flags
+                                    flags,
+
+                                    --CLK
+                                    CLK,
+
+                                    --Enable
+                                    Execute_EN,
+
+                                    --Reset
+                                    GLOBAL_RESET
+
+);
+-----------------------------------------------------------------------
+
+----------------------- Execute Stage ------------------------------
+EXMEM_LABEL : EX_Buffer_Entity PORT MAP (
+                                    --Execute stage outputs
+                                    EXMEM_ALU_RESULT ,
+                                    EXMEM_CONTROL_SIGNALS ,
+                                    EXMEM_PC  ,
+                                    EXMEM_Rdst  ,
+                                    EXMEM_Rsrc2  ,
+                                    EXMEM_Rdst_address  ,
+                                    EXMEM_Rsrc1_address ,
+                                    EXMEM_Rsrc2_address ,
+
+                                    --Buffer outputs
+                                    EXMEM_ALU_RESULT_OUT,
+                                    EXMEM_CONTROL_SIGNALS_OUT ,
+                                    EXMEM_PC_OUT ,
+                                    EXMEM_Rdst_OUT ,
+                                    EXMEM_Rsrc2_OUT ,
+                                    EXMEM_Rdst_address_OUT ,
+                                    EXMEM_Rsrc1_address_OUT ,
+                                    EXMEM_Rsrc2_address_OUT ,
+
+                                    --Write enable
+                                    EX_MEM_BUFFER_WRITE,
+
+                                    --CLK
+                                    CLK,
+                                    GLOBAL_RESET
+
+
+
+);
+-----------------------------------------------------------------------
 
 ----------------------- Memory Stage ------------------------------
 MemoryStage : MemoryEnt PORT MAP(
