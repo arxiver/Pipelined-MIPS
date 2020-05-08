@@ -638,7 +638,7 @@ EXMEM_LABEL : EX_Buffer_Entity PORT MAP (
                                     EXMEM_Rsrc2_address_OUT ,
 
                                     --Write enable
-                                    EX_MEM_BUFFER_WRITE,
+                                    '1',
 
                                     --CLK
                                     CLK,
