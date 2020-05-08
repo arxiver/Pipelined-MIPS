@@ -89,7 +89,7 @@ component fetch_stage is
     generic (n:integer := 16);
     port(       
             initial : in std_logic;
-            Clk ,reset,buffer_enable : in std_logic;
+            Clk ,reset : in std_logic;
             correct_branch_address,address2,mux8_output,read_data_1,predicted_branch_address : in std_logic_vector(15 downto 0);
             miss_prediction,int_fsm,func,branch,branch_prediction,stalling : in std_logic;                    
             hold_to_complete_out :out std_logic;
@@ -357,7 +357,6 @@ signal IFID_IR :  std_logic_vector (31 downto 0);
 signal IFID_PC :  std_logic_vector (15 downto 0);
 signal FS_IR :  std_logic_vector (31 downto 0);
 signal FS_PC :  std_logic_vector (15 downto 0);
-signal IFID_BUFFER_ENABLE :std_logic;
 ------------------------------------------------------------
 
 ---------------------Execute Stage----------------------------
@@ -428,8 +427,7 @@ begin
 FETCH_STAGE_INSTANCE : fetch_stage port map(
     initial => GLOBAL_INITAIL,
     Clk  => CLK ,
-    reset => GLOBAL_RESET,
-    buffer_enable => IFID_BUFFER_ENABLE ,
+    reset => GLOBAL_RESET,    
     correct_branch_address => ZERO_LOGIC_16,
     address2 => ZERO_LOGIC_16,
     mux8_output => ZERO_LOGIC_16,
@@ -449,7 +447,7 @@ FETCH_STAGE_INSTANCE : fetch_stage port map(
 FETCH_BUFFER_INSTANCE : fetch_buffer port map (
     clk  => CLK ,
 	reset_global  => GLOBAL_RESET ,
-    enable_global  => IFID_BUFFER_ENABLE,
+    enable_global  => '1',
     IR_enable  => GLOBAL_ENABLE,
     IR_reset  => GLOBAL_RESET,
     IR_in => FS_IR,

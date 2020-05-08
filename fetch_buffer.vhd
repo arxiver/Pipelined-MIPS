@@ -33,6 +33,8 @@ architecture fetch_buffer_arch of fetch_buffer is
     begin
     reset_IR_full <= reset_global or IR_reset;
     enable_IR_full <=enable_global and IR_enable;
+    reset_PC_full <= reset_global or PC_reset;
+    enable_PC_full <=enable_global and PC_enable;
     IR :reg generic map(n => 32)       
         port map(clk,reset_IR_full,enable_IR_full,IR_in,IR_out);
     PC :reg generic map(n => 16)       

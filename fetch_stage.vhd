@@ -10,7 +10,7 @@ entity fetch_stage is
     generic (n:integer := 16);
     port(       
             initial : in std_logic;
-            Clk ,reset,buffer_enable : in std_logic;
+            Clk ,reset : in std_logic;
             correct_branch_address,address2,mux8_output,read_data_1,predicted_branch_address : in std_logic_vector(15 downto 0);
             miss_prediction,int_fsm,func,branch,branch_prediction,stalling : in std_logic;                    
             hold_to_complete_out :out std_logic;
