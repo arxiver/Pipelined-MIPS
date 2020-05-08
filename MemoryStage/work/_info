@@ -1,0 +1,296 @@
+m255
+K4
+z2
+!s11e vcom 2019.2 2019.04, Apr 17 2019
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/media/sofyan/348216E58216AB7E/faculty/ThirdYear/Term_2/Arch/Project/Pipelined-MIPS/MemoryStage
+Emembufferent
+Z1 w1588863765
+Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z3 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+R0
+Z4 8BufferMemory.vhdl
+Z5 FBufferMemory.vhdl
+l0
+L6
+VaKk>2<hXQo0?A<RQ8_U193
+!s100 k93O_RY5?cR`W]FdmG:fD1
+Z6 OV;C;2019.2;69
+31
+Z7 !s110 1588864715
+!i10b 1
+Z8 !s108 1588864715.000000
+Z9 !s90 -reportprogress|300|-93|BufferMemory.vhdl|
+Z10 !s107 BufferMemory.vhdl|
+!i113 1
+o-93
+Z11 tExplicit 1 CvgOpt 0
+Amembufferarch
+R2
+R3
+DEx4 work 12 membufferent 0 22 aKk>2<hXQo0?A<RQ8_U193
+l29
+L18
+VnE;AJ5nP]R@hO`SAYhMl:1
+!s100 S[?]:J;f=HY4BM1^VzA>O2
+R6
+31
+R7
+!i10b 1
+R8
+R9
+R10
+!i113 1
+o-93
+R11
+Ememoryent
+Z12 w1588849083
+Z13 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
+Z14 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+Z15 DPx4 ieee 18 std_logic_unsigned 0 22 ;eZjO2D4ZDz<]0>8AL<ne1
+R2
+R3
+R0
+Z16 8MemoryStage.vhdl
+Z17 FMemoryStage.vhdl
+l0
+L7
+Vj`Q`zEmNY@JD9hfbbm1Fz3
+!s100 ;aXGlS@cdCP2Y66YmD^4T3
+R6
+31
+Z18 !s110 1588864837
+!i10b 1
+Z19 !s108 1588864837.000000
+Z20 !s90 -reportprogress|300|-93|MemoryStage.vhdl|
+Z21 !s107 MemoryStage.vhdl|
+!i113 1
+o-93
+R11
+Amemoryarch
+R13
+R14
+R15
+R2
+R3
+Z22 DEx4 work 9 memoryent 0 22 j`Q`zEmNY@JD9hfbbm1Fz3
+l71
+L36
+Z23 VZz^4bz1JAKL:]l@>3Cnf^3
+Z24 !s100 AHb7O>@@RW0X8:OjId_ZN0
+R6
+31
+R18
+!i10b 1
+R19
+R20
+R21
+!i113 1
+o-93
+R11
+Ememorytestbenchent
+Z25 w1588846726
+R2
+R3
+R0
+Z26 8MemoryTestBench.vhdl
+Z27 FMemoryTestBench.vhdl
+l0
+L5
+Vl5KYITfIf>R8Fb=iVBGG=0
+!s100 82N]4PGZcVgai?3VfNAGE0
+R6
+31
+Z28 !s110 1588846731
+!i10b 1
+Z29 !s108 1588846731.000000
+Z30 !s90 -reportprogress|300|-93|MemoryTestBench.vhdl|
+Z31 !s107 MemoryTestBench.vhdl|
+!i113 1
+o-93
+R11
+Amemorytestbencharch
+R2
+R3
+DEx4 work 18 memorytestbenchent 0 22 l5KYITfIf>R8Fb=iVBGG=0
+l54
+L10
+VJnPc[UBUMiNi]8kdQ3^QX3
+!s100 Njn]P0NlB09VS67cPJ58U3
+R6
+31
+R28
+!i10b 1
+R29
+R30
+R31
+!i113 1
+o-93
+R11
+Emux21ent
+Z32 w1588829555
+R2
+R3
+R0
+Z33 8Mux21.vhdl
+Z34 FMux21.vhdl
+l0
+L6
+Vnhc08RfhQNAc4mYPi]Z<52
+!s100 JzPT53YLITkUg0]Sekijg1
+R6
+31
+R18
+!i10b 1
+R19
+Z35 !s90 -reportprogress|300|-93|Mux21.vhdl|
+Z36 !s107 Mux21.vhdl|
+!i113 1
+o-93
+R11
+Amux21arch
+R2
+R3
+DEx4 work 8 mux21ent 0 22 nhc08RfhQNAc4mYPi]Z<52
+l18
+L18
+Vd]f0b@jC_10mKUGYeGGO;0
+!s100 nUQ=Vj?@o6HnV;Q5cFLQ_1
+R6
+31
+R18
+!i10b 1
+R19
+R35
+R36
+!i113 1
+o-93
+R11
+Emux41ent
+Z37 w1588846987
+R2
+R3
+R0
+Z38 8Mux41.vhdl
+Z39 FMux41.vhdl
+l0
+L6
+V^E^nNKP>gbn?8YTClzaja0
+!s100 D=31j3kJ8>eGhb;mabj2U1
+R6
+31
+R18
+!i10b 1
+R19
+Z40 !s90 -reportprogress|300|-93|Mux41.vhdl|
+Z41 !s107 Mux41.vhdl|
+!i113 1
+o-93
+R11
+Amux41arch
+R2
+R3
+DEx4 work 8 mux41ent 0 22 ^E^nNKP>gbn?8YTClzaja0
+l18
+L18
+V^eO5;:>3e`aNF7obRVGZk1
+!s100 KKfz0Oeg][PLzj8c9DGH83
+R6
+31
+R18
+!i10b 1
+R19
+R40
+R41
+!i113 1
+o-93
+R11
+Erament
+Z42 w1588837037
+R13
+R14
+R15
+R2
+R3
+R0
+Z43 8Ram.vhdl
+Z44 FRam.vhdl
+l0
+L7
+V0[bE18dNS4`gc?K2eQ>[e2
+!s100 :oCKaQOCVhGAJ=mk^gEC[1
+R6
+31
+R18
+!i10b 1
+R19
+Z45 !s90 -reportprogress|300|-93|Ram.vhdl|
+Z46 !s107 Ram.vhdl|
+!i113 1
+o-93
+R11
+Aramarch
+R13
+R14
+R15
+R2
+R3
+DEx4 work 6 rament 0 22 0[bE18dNS4`gc?K2eQ>[e2
+l24
+L21
+VdN^K`Y:9nJ?NHM_OSgc172
+!s100 >K^EH3e42edeS55iLM:K40
+R6
+31
+R18
+!i10b 1
+R19
+R45
+R46
+!i113 1
+o-93
+R11
+Eregent
+Z47 w1588864187
+R2
+R3
+R0
+Z48 8Register.vhdl
+Z49 FRegister.vhdl
+l0
+L4
+VQj5A6hmG6cYOE3HQLOW_M0
+!s100 <o>e6iEFk`bf]ZLfmfMR:0
+R6
+31
+R7
+!i10b 1
+Z50 !s108 1588864714.000000
+Z51 !s90 -reportprogress|300|-93|Register.vhdl|
+Z52 !s107 Register.vhdl|
+!i113 1
+o-93
+R11
+Aregarch
+R2
+R3
+DEx4 work 6 regent 0 22 Qj5A6hmG6cYOE3HQLOW_M0
+l16
+L15
+VlfEUb?[D35M>2>_:z^L4X3
+!s100 cI`Z^W`D16j3gK>?S`C563
+R6
+31
+R7
+!i10b 1
+R50
+R51
+R52
+!i113 1
+o-93
+R11

@@ -151,36 +151,73 @@ Rsrc2_address_OUT : out std_logic_vector (2 downto 0)
 );
 end component;
 
+-------------------------- Memory Stage component -----------------------------
+COMPONENT MemoryEnt IS
+    PORT(
+            --  For entity
+            Clk,Enable: IN std_logic;
 
+            -- Signals
+            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            Int,Call: IN std_logic;
 
+            -- Addresses 
+            PC,SP,ALUResult: IN std_logic_vector(31 DOWNTO 0);
 
-component Execute_Stage_Entity is 
-port(
---ID/EX INPUTS
-PC_Rdst_Data_In,Control_Signals_In,Read_Data1_In
-,Read_Data2_In,Extend_Mux_Output: in std_logic_vector (31 downto 0) ;
-DST_SRC_Addresses_In: in std_logic_vector (5 downto 0) ; 
+            -- Data
+            DataRead2: IN std_logic_vector(31 DOWNTO 0);
 
---EX/MEM Outputs
-PC_Rdst_Data_Out,Control_Signals_Out,ALU_Result_Out,Read_Data2_Out: out std_logic_vector (31 downto 0) ;
-DST_SRC_Addresses_Out: out std_logic_vector (5 downto 0) ; 
+            -- Outputs
+            MemOut: OUT std_logic_vector(31 DOWNTO 0);
+            SPOut: OUT std_logic_vector(31 DOWNTO 0);
+            ALUResultOut: OUT std_logic_vector(31 DOWNTO 0);
+            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0)
 
---Forwarding data
-Mem_Forwarding , WB_Forwarding: in std_logic_vector (31 downto 0) ;
+        );
+END COMPONENT;
 
---Forwarding unit selectors
-Forwarding_Selectors1,Forwarding_Selectors2 : in std_logic_vector (1 downto 0) ;
+-------------------------- Memory Buffer ----------------------------
 
---In Port Data
-In_Port: in std_logic_vector (31 downto 0) ;
+COMPONENT MemBufferEnt IS
+    PORT ( 
+            -- Inputs
+            Clk,Reset,Enable : IN std_logic;
+            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            SP,MemOut,ALUResult : IN std_logic_vector(31 DOWNTO 0);
 
---flags
-flags : inout std_logic_vector (3 downto 0) ; 
+            -- Outputs
+            ControlSignalsOut: OUT std_logic_vector(26 DOWNTO 0);
+            SPOut,MemOutOut,ALUResultOut : OUT std_logic_vector(31 DOWNTO 0)
+        );
+END COMPONENT;
 
---clk , enable , reset
-clk,Enable,Reset: in std_logic);
+--------------------------- WB Stage --------------------------
 
-end component Execute_Stage_Entity;
+COMPONENT WBEnt IS
+    PORT(
+            --  For entity
+            Clk,Enable: IN std_logic;
+
+            -- Signals
+            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            Int: IN std_logic;
+
+            -- SP 
+            SP : IN std_logic_vector(31 DOWNTO 0);
+
+            -- Data
+            MemOut,ALUResult: IN std_logic_vector(31 DOWNTO 0);
+
+            -- Outputs
+            ControlSignalsOut : OUT std_logic_vector(26 DOWNTO 0);
+            IntOut : OUT std_logic;
+            Mux10Out, SPOut : OUT std_logic_vector(31 DOWNTO 0)
+
+        );
+END COMPONENT;
+
+-----------------------------------------------------------------------
+
 --------------------   SIGNALS   ------------------------
 
 --------------------    CU   ----------------------------
@@ -251,6 +288,24 @@ signal FS_IR :  std_logic_vector (31 downto 0);
 signal FS_PC :  std_logic_vector (15 downto 0);
 signal IFID_BUFFER_ENABLE :std_logic;
 ------------------------------------------------------------
+
+---------------------- Memory Stage -------------------------
+SIGNAL MemOutMemory: std_logic_vector(31 DOWNTO 0);
+SIGNAL SPOutMemory: std_logic_vector(31 DOWNTO 0);
+SIGNAL ALUResultOutMemory: std_logic_vector(31 DOWNTO 0);
+SIGNAL ControlSignalsOutMemory: std_logic_vector(26 DOWNTO 0);
+
+----------------------- Memory Buffer ------------------------
+SIGNAL ControlSignalsOutBuffer : std_logic_vector(26 DOWNTO 0);
+SIGNAL SPOutBuffer : std_logic_vector(31 DOWNTO 0);
+SIGNAL MemOutBuffer: std_logic_vector(31 DOWNTO 0);
+SIGNAL ALUResultOutBuffer : std_logic_vector(31 DOWNTO 0);
+
+------------------------ WB Stage -----------------------
+SIGNAL ControlSignalsOutWB : std_logic_vector(26 DOWNTO 0);
+SIGNAL Mux10OutWB : std_logic_vector(31 DOWNTO 0);
+SIGNAL SPOutWB : std_logic_vector(31 DOWNTO 0);
+SIGNAL IntOutWB : std_logic;
 
 begin
 
@@ -393,5 +448,57 @@ ID_EX_INSTANCE : ID_EX port map (
     );
 
 ------------------------------------------------------------------
+
+----------------------- Memory Stage ------------------------------
+MemoryStage : MemoryEnt PORT MAP(
+                                    -- Inputs
+                                    CLK, 
+                                    '1', -- ENABLE 
+                                    "000000000000000000000000000", -- CONTROL SIGNAL 
+                                    '0',    -- Int
+                                    '0',    -- call
+                                    "00000000000000000000000000000000", -- PC
+                                    "00000000000000000000000000000000", -- SP
+                                    "00000000000000000000000000000000", -- ALU RESULT
+                                    "00000000000000000000000000000000", -- DATA READ 2
+
+                                    -- Outputs
+                                    MemOutMemory,
+                                    SPOutMemory,
+                                    ALUResultOutMemory,
+                                    ControlSignalsOutMemory
+                                ); 
+
+----------------------- Memory Buffer ------------------------------
+MemoryBuffer : MemBufferEnt PORT MAP(   
+                                        -- Inputs
+                                        CLK,
+                                        GLOBAL_RESET,
+                                        '1',
+                                        ControlSignalsOutMemory,
+                                        SPOutMemory,
+                                        MemOutMemory,
+                                        ALUResultOutMemory,
+
+                                        -- Outputs
+                                        ControlSignalsOutBuffer,
+                                        SPOutBuffer,
+                                        MemOutBuffer,
+                                        ALUResultOutBuffer
+);
+--------------------------- WB Stage --------------------------------
+WBStage : WBEnt PORT MAP(
+                            CLK,
+                            '1',    -- ENABLE
+                            ControlSignalsOutBuffer,    -- CONTROL SIGNAL
+                            '0',    -- INT
+                            SPOutBuffer,
+                            MemOutBuffer,
+                            ALUResultOutBuffer,
+                            ControlSignalsOutWB,
+                            IntOutWB,
+                            Mux10OutWB,
+                            SPOutWB
+);
 
 end architecture;

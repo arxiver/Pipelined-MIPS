@@ -31,3 +31,9 @@ fp-info-cache
 *.cr.mti
 *.wlf
 
+
+# Sofyan Files 
+/MemoryStage
+
+*.vstf
+*wlf*
