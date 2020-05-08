@@ -654,13 +654,24 @@ MemoryStage : MemoryEnt PORT MAP(
                                     -- Inputs
                                     CLK, 
                                     '1', -- ENABLE 
-                                    "000000000000000000000000000", -- CONTROL SIGNAL 
-                                    '0',    -- Int
-                                    '0',    -- call
-                                    "00000000000000000000000000000000", -- PC
-                                    "00000000000000000000000000000000", -- SP
-                                    "00000000000000000000000000000000", -- ALU RESULT
-                                    "00000000000000000000000000000000", -- DATA READ 2
+
+                                    -- Data to test my work
+                                    -- "000000000000000000000000000", -- CONTROL SIGNAL 
+                                    -- '0',    -- Int
+                                    -- '0',    -- call
+                                    -- "00000000000000000000000000000000", -- PC
+                                    -- "00000000000000000000000000000000", -- SP
+                                    -- "00000000000000000000000000000000", -- ALU RESULT
+                                    -- "00000000000000000000000000000000", -- DATA READ 2
+
+                                    -- Data from nassar
+                                    EXMEM_CONTROL_SIGNALS_OUT,
+                                    '0',
+                                    '0',
+                                    EXMEM_PC_OUT,
+                                    "00000000000000000000000000000000",
+                                    EXMEM_ALU_RESULT_OUT,
+                                    EXMEM_Rsrc2_OUT,
 
                                     -- Outputs
                                     MemOutMemory,
