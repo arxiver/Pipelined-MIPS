@@ -16,13 +16,16 @@ WR_DATA_2 : in std_logic_vector (31 downto 0);
 WR_EN_1 : in std_logic ;
 WR_EN_2 : in std_logic ;
 SWAP_EN : in std_logic ;
-
+REG_DST : in std_logic ;
 -- OUTPUTS
 RD_DATA_1 : out std_logic_vector (31 downto 0);
 RD_DATA_2 : out std_logic_vector (31 downto 0);
 
 -- HOLDING IMMEDIATE VALUE OR EXTENDED EFFECTIVE ADDRESS
-EA_IMM_DATA : out std_logic_vector (31 downto 0)
+EA_IMM_DATA : out std_logic_vector (31 downto 0);
+Rdst_address : out std_logic_vector (2 downto 0);
+Rsrc1_address : out std_logic_vector (2 downto 0);
+Rsrc2_address  : out std_logic_vector (2 downto 0)
 
 );
 end entity;
@@ -80,13 +83,16 @@ REG_FILE : register_file port map(
         WRen_port2      => WR_EN_2,
         WRaddress_port1 => WR_ADDRESS_1,
         WRaddress_port2 => WR_ADDRESS_2, 
-        RDaddress_port1 => RD_ADDRESS_1,
+        RDaddress_port1 => IR(26 downto 24),
         RDaddress_port2 => RD_ADDRESS_2,
         WRdatain_port1  => WR_DATA_1,
         WRdatain_port2  => WR_DATA_2,
         RDdataout_port1 => RD_DATA_1,
         RDdataout_port2 => RD_DATA_2 );
-RD_ADDRESS_1 <= IR(26 downto 24) ;
-RD_ADDRESS_2 <= IR(23 downto 21) when SWAP_EN = '0' else IR(20 downto 18) ;
 EA_IMM_DATA <= zero_extended_value when EA_IMM_SEL = '0' else sign_extended_value ;
+Rsrc1_address <= IR(26 downto 24) ;
+Rsrc2_address <=  IR(23 downto 21) ;
+Rdst_address <= IR(20 downto 18) when SWAP_EN = '1' or REG_DST = '1' else IR(23 downto 21) ;
+RD_ADDRESS_2 <= IR(23 downto 21) when SWAP_EN = '0' else IR(20 downto 18) ;
+
 end architecture;

@@ -273,7 +273,7 @@ begin
             OUT_SIG         <= '0';
             IN_SIG          <= '0';
             ALU_OPR         <= "0011";
-            ALU_SRC         <= '0';
+            ALU_SRC         <= '1';
             REG_DST         <= '1';
             MEM_TO_REG      <= '0';
             FETCH_EN        <= '0';

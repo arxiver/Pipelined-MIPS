@@ -6,6 +6,7 @@ port (
 ENABLE : in std_logic ;
 RESET : in std_logic;
 CLK : in std_logic;
+STALL_SIG : in std_logic ; 
 -- CONTROL SIGNALS
 PC : in std_logic_vector (31 downto 0);
 Rdst : in std_logic_vector (31 downto 0);
@@ -64,7 +65,9 @@ port(	clk : in std_logic ;
 );
 end component;
 signal TMP_CONTROL_SIGNAS : std_logic_vector (26 downto 0);
+signal reset_stall : std_logic ; 
 begin
+reset_stall <= RESET or STALL_SIG ; 
 TMP_CONTROL_SIGNAS(0)  			<= OUT_SIG;
 TMP_CONTROL_SIGNAS(1)  			<= IN_SIG;
 TMP_CONTROL_SIGNAS(5 downto 2)  <= ALU_OPR;
@@ -89,15 +92,16 @@ TMP_CONTROL_SIGNAS(23) 			<= WB;
 TMP_CONTROL_SIGNAS(24) 			<= FLUSH_JMP;
 TMP_CONTROL_SIGNAS(25) 			<= FLUSH_FUNC;
 TMP_CONTROL_SIGNAS(26) 			<= FLUSH_JZ;
-REG_CONTROL_SIGNALS : reg generic map(27) port map(CLK, RESET, ENABLE,TMP_CONTROL_SIGNAS,OUT_CONTROL_SIGNALS);
-REG_PC : reg generic map (32) port map(CLK, RESET, ENABLE, PC ,PC_OUT);
-REG_Rdst : reg generic map (32) port map(CLK, RESET, ENABLE, Rdst ,Rdst_OUT);
-REG_Rsrc1 : reg generic map (32) port map(CLK, RESET, ENABLE, Rsrc1 ,Rsrc1_OUT);
-REG_Rsrc2 : reg generic map (32) port map(CLK, RESET, ENABLE, Rsrc2 ,Rsrc2_OUT);
-REG_EA_IMM_DATA : reg generic map (32) port map(CLK, RESET, ENABLE, EA_IMM_DATA ,EA_IMM_DATA_OUT);
 
-REG_Rdst_address : reg generic map (3) port map(CLK, RESET, ENABLE, Rdst_address ,Rdst_address_OUT);
-REG_Rsrc1_address : reg generic map (3) port map(CLK, RESET, ENABLE, Rsrc1_address ,Rsrc1_address_OUT);
-REG_Rsrc2_address : reg generic map (3) port map(CLK, RESET, ENABLE, Rsrc2_address ,Rsrc2_address_OUT);
+REG_CONTROL_SIGNALS : reg generic map(27) port map(CLK, reset_stall, ENABLE,TMP_CONTROL_SIGNAS,OUT_CONTROL_SIGNALS);
+REG_PC : reg generic map (32) port map(CLK, reset_stall, ENABLE, PC ,PC_OUT);
+REG_Rdst : reg generic map (32) port map(CLK, reset_stall, ENABLE, Rdst ,Rdst_OUT);
+REG_Rsrc1 : reg generic map (32) port map(CLK, reset_stall, ENABLE, Rsrc1 ,Rsrc1_OUT);
+REG_Rsrc2 : reg generic map (32) port map(CLK, reset_stall, ENABLE, Rsrc2 ,Rsrc2_OUT);
+REG_EA_IMM_DATA : reg generic map (32) port map(CLK, reset_stall, ENABLE, EA_IMM_DATA ,EA_IMM_DATA_OUT);
+
+REG_Rdst_address : reg generic map (3) port map(CLK, reset_stall, ENABLE, Rdst_address ,Rdst_address_OUT);
+REG_Rsrc1_address : reg generic map (3) port map(CLK, reset_stall, ENABLE, Rsrc1_address ,Rsrc1_address_OUT);
+REG_Rsrc2_address : reg generic map (3) port map(CLK, reset_stall, ENABLE, Rsrc2_address ,Rsrc2_address_OUT);
 
 end architecture;
