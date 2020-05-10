@@ -22,7 +22,7 @@ PORT   (     a, b : IN std_logic_vector(31 DOWNTO 0) ;
 end component my_nadder;
 
 signal AND_OP,OR_OP,ADD_OP,SUB_OP,INC_OP,DEC_OP,DECYop,DATA1_BAR,DATA2_BAR,F_Buffer : std_logic_vector(31 downto 0);
-signal Cout_ADD,Cout_SUB,Cout_INC,Cout_DEC : std_logic ;
+signal Cout_ADD,Cout_SUB,Cout_INC,Cout_DEC , Temp1,Temp2 : std_logic ;
 signal CINbar: std_logic ;
 begin
 ----------------------------------------------------------------------------------
@@ -36,11 +36,11 @@ OR_OP <= Data1 or Data2;
 -- ADDop = Data1 + Data2
 ADDsig : my_nadder port map(Data1,Data2,'0',ADD_op,Cout_ADD);
 -- SUB = Data1 - Data2
-SUBsig: my_nadder port map(Data1,DATA2_BAR,'1',SUB_op,Cout_SUB);
+SUBsig: my_nadder port map(Data1,DATA2_BAR,'1',SUB_op,Temp1);
 -- INCop = Data1 + 1
 INCBUSsig : my_nadder port map(Data1,(others=>'0'),'1',INC_op,Cout_INC);
 -- DECBUSop = Data1 - 1
-DECBUSsig: my_nadder port map(Data1,(others=>'1'),'0',DEC_op,Cout_DEC);
+DECBUSsig: my_nadder port map(Data1,(others=>'1'),'0',DEC_op,Temp2);
 -------------------------------------------------------------------------------------
 
 F_Buffer <= (DATA1_BAR)   When S = "000"  -- NOT	
@@ -54,11 +54,17 @@ F_Buffer <= (DATA1_BAR)   When S = "000"  -- NOT
 	
     F <= F_Buffer;
 
+Cout_SUB <= '1' when S = "100" and Data2 > Data1
+	else '0';
+
+Cout_DEC <= '1' when S = "010" and Data1 = "00000000000000000000000000000000"
+	else '0';
+
    --carry flag
-    Flags(2) <= Cout_INC when  S="000"  --INC
-    else Cout_DEC when S = "001" --DEC 
-    else Cout_ADD when S = "010"    --ADD
-    else Cout_SUB when S = "011"  --SUB
+    Flags(2) <= Cout_INC when  S="001"  --INC
+    else Cout_DEC when S = "010"  --DEC 
+    else Cout_ADD when S = "011"    --ADD
+    else Cout_SUB when S = "100"  --SUB
     else Flags(2) ;
       
 
