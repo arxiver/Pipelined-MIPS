@@ -41,9 +41,11 @@ vcom -93 MemoryStage.vhdl
 vcom -93 Register.vhdl
 vcom -93 BufferMemory.vhdl
 
-############################### WB Stage #####################################
+############################### WB Stage #########################################
 vcom -93 WBStage.vhdl
 
+############################### Tri State #########################################
+vcom -93 TriState.vhdl
 
 
 ##################################### Main ########################################
@@ -51,4 +53,43 @@ vcom -93 _CPU_MAIN.vhd
 
 ###################################### VISM ########################################
 vsim CPU_MAIN
+
+#################################### Sofyan Test ####################################
+
+add wave -position end  sim:/cpu_main/WB_WR_ADDRESS_1
+add wave -position end  sim:/cpu_main/WB_WR_ADDRESS_2
+add wave -position end  sim:/cpu_main/WB_WR_DATA_1
+add wave -position end  sim:/cpu_main/WB_WR_DATA_2
+add wave -position end  sim:/cpu_main/WB_WR_EN_1
+add wave -position end  sim:/cpu_main/WB_WR_EN_2
+add wave -position end  sim:/cpu_main/WB_SWAP_EN
+add wave -position end  sim:/cpu_main/RDesDataOutMemory
+add wave -position end  sim:/cpu_main/RSrc2DataOutMemory
+add wave -position end  sim:/cpu_main/RDesOutMemory
+add wave -position end  sim:/cpu_main/RSrcOut1Memory
+add wave -position end  sim:/cpu_main/RSrcOut2Memory
+add wave -position end  sim:/cpu_main/MemOutMemory
+add wave -position end  sim:/cpu_main/SPOutMemory
+add wave -position end  sim:/cpu_main/ALUResultOutMemory
+add wave -position end  sim:/cpu_main/ControlSignalsOutMemory
+add wave -position end  sim:/cpu_main/RDesDataOutBuffer
+add wave -position end  sim:/cpu_main/RSrc2DataOutBuffer
+add wave -position end  sim:/cpu_main/RDesOutBuffer
+add wave -position end  sim:/cpu_main/RSrcOut1Buffer
+add wave -position end  sim:/cpu_main/RSrcOut2Buffer
+add wave -position end  sim:/cpu_main/ControlSignalsOutBuffer
+add wave -position end  sim:/cpu_main/SPOutBuffer
+add wave -position end  sim:/cpu_main/MemOutBuffer
+add wave -position end  sim:/cpu_main/ALUResultOutBuffer
+add wave -position end  sim:/cpu_main/RDesDataOutWB
+add wave -position end  sim:/cpu_main/RSrc2DataOutWB
+add wave -position end  sim:/cpu_main/RDesOutWB
+add wave -position end  sim:/cpu_main/RSrcOut1WB
+add wave -position end  sim:/cpu_main/RSrcOut2WB
+add wave -position end  sim:/cpu_main/ControlSignalsOutWB
+add wave -position end  sim:/cpu_main/Mux10OutWB
+add wave -position end  sim:/cpu_main/SPOutWB
+add wave -position end  sim:/cpu_main/IntOutWB
+add wave -position end  sim:/cpu_main/CLK
+force -freeze sim:/cpu_main/CLK 1 0, 0 {50 ps} -r 100
 

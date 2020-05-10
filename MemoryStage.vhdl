@@ -20,6 +20,10 @@ ENTITY MemoryEnt IS
             -- Addresses 
             PC,SP,ALUResult: IN std_logic_vector(n-1 DOWNTO 0);
 
+
+            RDesData  : IN std_logic_vector(31 DOWNTO 0);
+            RSrc2Data : IN std_logic_vector(31 DOWNTO 0);
+
             RDes : IN std_logic_vector(2 DOWNTO 0);
             RSrc1 : IN std_logic_vector(2 DOWNTO 0);
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
@@ -28,6 +32,9 @@ ENTITY MemoryEnt IS
             DataRead2: IN std_logic_vector(n-1 DOWNTO 0);
 
             -- Outputs
+            RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
+            RSrc2DataOut : OUT std_logic_vector(31 DOWNTO 0);
+
             RDesOut : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
@@ -86,11 +93,8 @@ BEGIN
     -- RAM
     Ram1 : RamEnt port map(Clk,MemWSignal,MemR,OutMux7,OutMux8,MemOut);
 
-    PROCESS(Clk) BEGIN 
-        IF(rising_edge(Clk) AND Enable='1') THEN
-            -- CONTROL SIGNALS ASSIGNMENT
-            -- Int <= '0';
-            -- Call <= '0';
+    -- PROCESS(Clk) BEGIN 
+        -- IF(rising_edge(Clk) AND Enable='1') THEN
             IncrementOrDecrement <= ControlSignals(17);
             SPSignal <= ControlSignals(16);
             MemW <= ControlSignals(13);
@@ -108,14 +112,18 @@ BEGIN
             MemWSignal <= MemW OR Int;
 
             -- Outputs
+            RDesDataOut <= RDesData;
+            RSrc2DataOut <= RSrc2Data;
+
             RDesOut <= RDes;
             RSrcOut1 <= RSrc1;
             RSrcOut2 <= RSrc2;
 
+            -- wait for 10 ns;
             SPOut <= OutMux6;
             ALUResultOut <= ALUResult;
             ControlSignalsOut <= ControlSignals;
-        END IF;
-    END PROCESS;
+        -- END IF;
+    -- END PROCESS;
     
 END ARCHITECTURE;
