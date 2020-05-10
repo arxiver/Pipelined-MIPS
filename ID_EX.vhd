@@ -67,7 +67,7 @@ end component;
 signal TMP_CONTROL_SIGNAS : std_logic_vector (26 downto 0);
 signal reset_stall : std_logic ; 
 begin
-reset_stall <= RESET or STALL_SIG ; 
+reset_stall <= RESET  ; 
 TMP_CONTROL_SIGNAS(0)  			<= OUT_SIG;
 TMP_CONTROL_SIGNAS(1)  			<= IN_SIG;
 TMP_CONTROL_SIGNAS(5 downto 2)  <= ALU_OPR;

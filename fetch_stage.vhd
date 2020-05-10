@@ -32,7 +32,8 @@ component ins_ram is
 end component;
 
 
-   signal IR : std_logic_vector(31 downto 0);     
+   signal IR : std_logic_vector(31 downto 0);
+   signal prev_IR_16_bit : std_logic_vector(15 downto 0);     
    signal bit_IR_16 : std_logic_vector(15 downto 0);
    signal PC :std_logic_vector(31 downto 0);
    signal IR_enable : std_logic;
@@ -81,7 +82,8 @@ end if;
 end if;
 else if (falling_edge(clk)) then
     if(hold_to_complete = '0')then 
-        IR <=  bit_IR_16 & "0000000000000000" ;        
+        IR <=  bit_IR_16 & "0000000000000000" ;    
+        prev_IR_16_bit <= bit_IR_16;
          if ((bit_IR_16(15 downto 11) = "10010")  	--LDM
 					OR (bit_IR_16(15 downto 11) = "10011") --LDD
 					OR (bit_IR_16(15 downto 11) = "10100") --STD
@@ -89,11 +91,13 @@ else if (falling_edge(clk)) then
 					OR (bit_IR_16(15 downto 11) = "01110")   --SHL
                     OR (bit_IR_16(15 downto 11) = "01111")) then   --SHR     
                     hold_to_complete <= '1';
+                    IR <= "00000000000000000000000000000000";
         else 
         hold_to_complete <= '0';
         end if;
     else 
         hold_to_complete <= '0';
+        IR(31 downto 16) <= prev_IR_16_bit ;
         IR(15 downto 0) <= bit_IR_16 ;
     end if;    
 end if ;
