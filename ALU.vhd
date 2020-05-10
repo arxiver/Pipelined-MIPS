@@ -1,7 +1,7 @@
 
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
-USE ieee.std_logic_arith.all;
+use IEEE.numeric_STD.ALL;
 
 entity ALU_ENTITY is 
 port(

@@ -26,6 +26,7 @@ EXMEM_Rdst_address :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address :out  std_logic_vector (2 downto 0); 
 
+
 --Forwarding data
 Mem_Forwarding , WB_Forwarding: in std_logic_vector (31 downto 0) ;
 
