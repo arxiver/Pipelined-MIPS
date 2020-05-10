@@ -58,13 +58,17 @@ WR_DATA_2 : in std_logic_vector (31 downto 0);
 WR_EN_1 : in std_logic ;
 WR_EN_2 : in std_logic ;
 SWAP_EN : in std_logic ;
+REG_DST : in std_logic ;
 
 -- OUTPUTS
 RD_DATA_1 : out std_logic_vector (31 downto 0);
 RD_DATA_2 : out std_logic_vector (31 downto 0);
 
 -- HOLDING IMMEDIATE VALUE OR EXTENDED EFFECTIVE ADDRESS
-EA_IMM_DATA : out std_logic_vector (31 downto 0)
+EA_IMM_DATA : out std_logic_vector (31 downto 0);
+Rdst_address : out std_logic_vector (2 downto 0);
+Rsrc1_address : out std_logic_vector (2 downto 0);
+Rsrc2_address  : out std_logic_vector (2 downto 0)
 
 );
 end component;       
@@ -104,6 +108,7 @@ port (
 ENABLE : in std_logic ;
 RESET : in std_logic;
 CLK : in std_logic;
+STALL_SIG : in std_logic ; 
 -- CONTROL SIGNALS
 PC : in std_logic_vector (31 downto 0);
 Rdst : in std_logic_vector (31 downto 0);
@@ -458,6 +463,12 @@ SIGNAL ControlSignalsOutWB : std_logic_vector(26 DOWNTO 0);
 SIGNAL Mux10OutWB : std_logic_vector(31 DOWNTO 0);
 SIGNAL SPOutWB : std_logic_vector(31 DOWNTO 0);
 SIGNAL IntOutWB : std_logic;
+--------------------------------
+signal STALL_TO_FECTH_COMPELETE : std_logic ; 
+signal DS_Rdst_address : std_logic_vector (2 DOWNTO 0);
+signal DS_Rsrc1_address : std_logic_vector (2 DOWNTO 0);
+signal DS_Rsrc2_address : std_logic_vector (2 DOWNTO 0);
+--------------------------------
 
 begin
 
@@ -477,7 +488,7 @@ FETCH_STAGE_INSTANCE : fetch_stage port map(
     branch => '0',
     branch_prediction => '0',
     stalling            => '0',
-    hold_to_complete_out => open, ---should be handled to wait for another fetch  
+    hold_to_complete_out => STALL_TO_FECTH_COMPELETE, ---should be handled to wait for another fetch  
     out_IR =>FS_IR ,
     out_PC => FS_PC
 );
@@ -540,28 +551,35 @@ DECODE_STAGE_INSTANCE : decode_stage port map (
     WR_EN_1             => WB_WR_EN_1,
     WR_EN_2             => WB_WR_EN_2,
     SWAP_EN             => CU_SWAP,
+    REG_DST             => CU_REG_DST,
 
     -- OUTPUTS
     RD_DATA_1           => DS_RD_DATA_1_OUT,
     RD_DATA_2           => DS_RD_DATA_2_OUT,
     -- HOLDING IMMEDIATE VALUE OR EXTENDED EFFECTIVE ADDRESS
-    EA_IMM_DATA         => EAIMM_MUXOP_DS
+    EA_IMM_DATA         => EAIMM_MUXOP_DS,
+    Rdst_address        => DS_Rdst_address,
+    Rsrc1_address       => DS_Rsrc1_address,
+    Rsrc2_address       => DS_Rsrc2_address
+ --_PUTHERE_
     );
 ------------------------------------------------------------------
 ID_EX_INSTANCE : ID_EX port map (
     -- INPUTS 
     ENABLE              => GLOBAL_ENABLE, 
     RESET               => GLOBAL_RESET, 
-    CLK                 => CLK, 
+    CLK                 => CLK,
+    STALL_SIG           => STALL_TO_FECTH_COMPELETE,
+
     -- CONTROL SIGNALS
     PC                  => GLOBAL_PC, 
     Rdst                => DS_RD_DATA_2_OUT,
     Rsrc1               => DS_RD_DATA_1_OUT,
     Rsrc2               => DS_RD_DATA_2_OUT,
     EA_IMM_DATA         => EAIMM_MUXOP_DS, 
-    Rdst_address        => IFID_IR( 20 downto 18), 
-    Rsrc1_address       => IFID_IR( 26 downto 24),
-    Rsrc2_address       => IFID_IR( 23 downto 21),
+    Rdst_address        => DS_Rdst_address, 
+    Rsrc1_address       => DS_Rsrc1_address,
+    Rsrc2_address       => DS_Rsrc2_address,
     OUT_SIG             => CU_OUT_SIG, 
     IN_SIG              => CU_IN_SIG, 
     ALU_OPR             => CU_ALU_OPR,
