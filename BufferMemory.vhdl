@@ -13,11 +13,17 @@ ENTITY MemBufferEnt IS
             ControlSignals : IN std_logic_vector(26 DOWNTO 0);
             SP,MemOut,ALUResult : IN std_logic_vector(n-1 DOWNTO 0);
 
+            RDesData  : IN std_logic_vector(31 DOWNTO 0);
+            RSrc2Data : IN std_logic_vector(31 DOWNTO 0);
+
             RDes : IN std_logic_vector(2 DOWNTO 0);
             RSrc1 : IN std_logic_vector(2 DOWNTO 0);
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
 
             -- Outputs
+            RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
+            RSrc2DataOut : OUT std_logic_vector(31 DOWNTO 0);
+
             RDesOut : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
@@ -46,6 +52,10 @@ BEGIN
     ControlSignalsBuffer  : RegEnt GENERIC MAP(27) PORT MAP(Clk,Reset,Enable,ControlSignals,ControlSignalsOut);
     MemOutBuffer          : RegEnt GENERIC MAP(32) PORT MAP(Clk,Reset,Enable,MemOut,MemOutOut);
     ALUResultBuffer       : RegEnt GENERIC MAP(32) PORT MAP(Clk,Reset,Enable,ALUResult,ALUResultOut);
+
+
+    RDesDataBuffer       : RegEnt GENERIC MAP(32) PORT MAP(Clk,Reset,Enable,RDesData,RDesDataOut);
+    RSrc2DataBuffer       : RegEnt GENERIC MAP(32) PORT MAP(Clk,Reset,Enable,RSrc2Data,RSrc2DataOut);
 
     RDesModule        : RegEnt GENERIC MAP(3) PORT MAP(Clk,Reset,Enable,RDes,RDesOut);
     RSrc1Module       : RegEnt GENERIC MAP(3) PORT MAP(Clk,Reset,Enable,RSrc1,RSrcOut1);

@@ -5,7 +5,8 @@ port (
 GLOBAL_ENABLE : in std_logic;
 GLOBAL_RESET : in std_logic;
 GLOBAL_INITAIL : in std_logic;
-CLK : in std_logic 
+CLK : in std_logic ;
+OUTPORT : out std_logic_vector(31 DOWNTO 0)
 );
 end entity;
 
@@ -240,6 +241,9 @@ COMPONENT MemoryEnt IS
             -- Addresses 
             PC,SP,ALUResult: IN std_logic_vector(31 DOWNTO 0);
 
+            RDesData  : IN std_logic_vector(31 DOWNTO 0);
+            RSrc2Data : IN std_logic_vector(31 DOWNTO 0);
+
             RDes : IN std_logic_vector(2 DOWNTO 0);
             RSrc1 : IN std_logic_vector(2 DOWNTO 0);
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
@@ -248,6 +252,9 @@ COMPONENT MemoryEnt IS
             DataRead2: IN std_logic_vector(31 DOWNTO 0);
 
             -- Outputs
+            RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
+            RSrc2DataOut : OUT std_logic_vector(31 DOWNTO 0);
+
             RDesOut : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
@@ -269,11 +276,17 @@ COMPONENT MemBufferEnt IS
             ControlSignals : IN std_logic_vector(26 DOWNTO 0);
             SP,MemOut,ALUResult : IN std_logic_vector(31 DOWNTO 0);
 
+            RDesData  : IN std_logic_vector(31 DOWNTO 0);
+            RSrc2Data : IN std_logic_vector(31 DOWNTO 0);
+
             RDes : IN std_logic_vector(2 DOWNTO 0);
             RSrc1 : IN std_logic_vector(2 DOWNTO 0);
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
 
             -- Outputs
+
+            RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
+            RSrc2DataOut : OUT std_logic_vector(31 DOWNTO 0);
 
             RDesOut : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
@@ -301,21 +314,35 @@ COMPONENT WBEnt IS
             -- Data
             MemOut,ALUResult: IN std_logic_vector(31 DOWNTO 0);
 
+            RDesData  : IN std_logic_vector(31 DOWNTO 0);
+            RSrc2Data : IN std_logic_vector(31 DOWNTO 0);
+
             RDes : IN std_logic_vector(2 DOWNTO 0);
             RSrc1 : IN std_logic_vector(2 DOWNTO 0);
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
 
             -- Outputs
+            RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
+            RSrc2DataOut : OUT std_logic_vector(31 DOWNTO 0);
+
             RDesOut : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
 
             ControlSignalsOut : OUT std_logic_vector(26 DOWNTO 0);
             IntOut : OUT std_logic;
-            Mux10Out, SPOut : OUT std_logic_vector(31 DOWNTO 0);
+            Mux10Out, SPOut : OUT std_logic_vector(31 DOWNTO 0)
 
-            WRE : OUT std_logic
+            -- WRE : OUT std_logic
         );
+END COMPONENT;
+
+COMPONENT TriStateEnt is
+    Port(
+    EN : in std_logic;
+    X : IN std_logic_vector(31 downto 0);
+    F : OUT std_logic_vector(31 downto 0)
+);
 END COMPONENT;
 
 -----------------------------------------------------------------------
@@ -435,6 +462,9 @@ SIGNAL EX_MEM_BUFFER_WRITE : std_logic;
 ---------------------------------------------------------------
 
 ---------------------- Memory Stage -------------------------
+SIGNAL RDesDataOutMemory : std_logic_vector(31 DOWNTO 0);
+SIGNAL RSrc2DataOutMemory: std_logic_vector(31 DOWNTO 0);
+
 SIGNAL RDesOutMemory : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut1Memory : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut2Memory : std_logic_vector(2 DOWNTO 0);
@@ -445,6 +475,9 @@ SIGNAL ALUResultOutMemory: std_logic_vector(31 DOWNTO 0);
 SIGNAL ControlSignalsOutMemory: std_logic_vector(26 DOWNTO 0);
 
 ----------------------- Memory Buffer ------------------------
+SIGNAL RDesDataOutBuffer : std_logic_vector(31 DOWNTO 0);
+SIGNAL RSrc2DataOutBuffer: std_logic_vector(31 DOWNTO 0);
+
 SIGNAL RDesOutBuffer : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut1Buffer : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut2Buffer : std_logic_vector(2 DOWNTO 0);
@@ -455,6 +488,9 @@ SIGNAL MemOutBuffer: std_logic_vector(31 DOWNTO 0);
 SIGNAL ALUResultOutBuffer : std_logic_vector(31 DOWNTO 0);
 
 ------------------------ WB Stage -----------------------
+SIGNAL RDesDataOutWB : std_logic_vector(31 DOWNTO 0);
+SIGNAL RSrc2DataOutWB: std_logic_vector(31 DOWNTO 0);
+
 SIGNAL RDesOutWB : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut1WB : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut2WB : std_logic_vector(2 DOWNTO 0);
@@ -684,7 +720,7 @@ EXMEM_LABEL : EX_Buffer_Entity PORT MAP (
                                     --Buffer outputs
                                     EXMEM_ALU_RESULT_OUT,
                                     EXMEM_CONTROL_SIGNALS_OUT ,
-                                    EXMEM_PC_OUT ,
+                                    EXMEM_PC_OUT ,  
                                     EXMEM_Rdst_OUT ,
                                     EXMEM_Rsrc2_OUT ,
                                     EXMEM_Rdst_address_OUT ,
@@ -710,32 +746,47 @@ MemoryStage : MemoryEnt PORT MAP(
                                     '1', -- ENABLE 
 
                                     -- Data to test my work
-                                    -- "000000000000000000000000000", -- CONTROL SIGNAL 
-                                    -- '0',    -- Int
-                                    -- '0',    -- call
-                                    -- "00000000000000000000000000000001", -- PC
-                                    -- "00000000000000000000000000000010", -- SP
-                                    -- "00000000000000000000000000000100", -- ALU RESULT
-                                    -- "00000000000000000000000000001000", -- DATA READ 2
+                                    "000000000001010010000000001", -- CONTROL SIGNAL 
+                                    '0',    -- Int
+                                    '0',    -- call
+                                    "00000000000000000000000000000001", -- PC
+                                    "00000000000000000000000000000010", -- SP
+                                    "00000000000000000000000000000100", -- ALU RESULT
+
+                                    "00000000000000000000000000001000", -- RDes 
+                                    "00000000000000000000000000000110", -- RSrc2 (don't use)
+
+                                    "001", -- RDesAddress 
+                                    "010", -- RSrc1Address
+                                    "100", -- RSrc2Address
+
+                                    "00000000000000000000000000001000", -- DATA READ 2
 
                                     -- Data from nassar
-                                    EXMEM_CONTROL_SIGNALS_OUT,
-                                    '0',
-                                    '0',
-                                    EXMEM_PC_OUT,
-                                    "00000000000000000000000000000000",
-                                    EXMEM_ALU_RESULT_OUT,
+                                    -- EXMEM_CONTROL_SIGNALS_OUT,
+                                    -- '0',
+                                    -- '0',
+                                    -- EXMEM_PC_OUT,
+                                    -- "00000000000000000000000000000000",
+                                    -- EXMEM_ALU_RESULT_OUT,
 
-                                    EXMEM_Rdst_address_OUT ,
-                                    EXMEM_Rsrc1_address_OUT ,
-                                    EXMEM_Rsrc2_address_OUT ,
+                                    -- EXMEM_Rdst_OUT ,
+                                    -- EXMEM_Rsrc2_OUT ,
 
-                                    EXMEM_Rsrc2_OUT,
+                                    -- EXMEM_Rdst_address_OUT ,
+                                    -- EXMEM_Rsrc1_address_OUT ,
+                                    -- EXMEM_Rsrc2_address_OUT ,
+
+                                    -- EXMEM_Rsrc2_OUT,
 
                                     -- Outputs
+                                    RDesDataOutMemory,
+                                    RSrc2DataOutMemory,
+
                                     RDesOutMemory,
                                     RSrcOut1Memory,
                                     RSrcOut2Memory,
+
                                     MemOutMemory,
                                     SPOutMemory,
                                     ALUResultOutMemory,
@@ -753,14 +804,21 @@ MemoryBuffer : MemBufferEnt PORT MAP(
                                         MemOutMemory,
                                         ALUResultOutMemory,
 
+                                        RDesDataOutMemory,
+                                        RSrc2DataOutMemory,
+
                                         RDesOutMemory,
                                         RSrcOut1Memory,
                                         RSrcOut2Memory,
 
                                         -- Outputs
+                                        RDesDataOutBuffer,
+                                        RSrc2DataOutBuffer,
+
                                         RDesOutBuffer,
                                         RSrcOut1Buffer,
                                         RSrcOut2Buffer,
+
                                         ControlSignalsOutBuffer,
                                         SPOutBuffer,
                                         MemOutBuffer,
@@ -768,6 +826,7 @@ MemoryBuffer : MemBufferEnt PORT MAP(
 );
 --------------------------- WB Stage --------------------------------
 WBStage : WBEnt PORT MAP(
+                            -- Inputs
                             CLK,
                             '1',    -- ENABLE
                             ControlSignalsOutBuffer,    -- CONTROL SIGNAL
@@ -776,19 +835,46 @@ WBStage : WBEnt PORT MAP(
                             MemOutBuffer,
                             ALUResultOutBuffer,
 
+                            RDesDataOutBuffer,
+                            RSrc2DataOutBuffer,
+
                             RDesOutBuffer,
                             RSrcOut1Buffer,
                             RSrcOut2Buffer,
 
-                            WB_WR_ADDRESS_1,
+                            -- Outputs
+
+                            RDesDataOutWB,
+                            RSrc2DataOutWB,
+
+                            RDesOutWB,
                             RSrcOut1WB,
                             RSrcOut2WB,
 
                             ControlSignalsOutWB,
                             IntOutWB,
-                            WB_WR_DATA_1,
-                            SPOutWB,
-                            WB_WR_EN_1
+                            Mux10OutWB,
+                            SPOutWB
+                            -- WB_WR_EN_1
 );
+
+------------------------------ Tri State -------------------------------
+
+TriState1 : TriStateEnt PORT MAP(ControlSignalsOutWB(0),Mux10OutWB,OUTPORT);
+
+
+
+---------------------------- WB output's logic --------------------------
+
+-- WB
+WB_WR_EN_2      <= ControlSignalsOutWB(10);
+WB_WR_ADDRESS_2 <= RDesOutWB;
+WB_WR_DATA_2    <= Mux10OutWB;
+
+WB_WR_EN_1      <= ControlSignalsOutWB(15);
+WB_WR_ADDRESS_1 <= RSrcOut1WB;
+WB_WR_DATA_1    <= RDesDataOutWB;
+
+WB_SWAP_EN <= ControlSignalsOutWB(15);
 
 end architecture;
