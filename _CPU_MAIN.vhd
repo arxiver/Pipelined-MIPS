@@ -746,38 +746,38 @@ MemoryStage : MemoryEnt PORT MAP(
                                     '1', -- ENABLE 
 
                                     -- Data to test my work
-                                    "000000000001010010000000001", -- CONTROL SIGNAL 
-                                    '0',    -- Int
-                                    '0',    -- call
-                                    "00000000000000000000000000000001", -- PC
-                                    "00000000000000000000000000000010", -- SP
-                                    "00000000000000000000000000000100", -- ALU RESULT
+                                    -- "000000000001010010000000001", -- CONTROL SIGNAL 
+                                    -- '0',    -- Int
+                                    -- '0',    -- call
+                                    -- "00000000000000000000000000000001", -- PC
+                                    -- "00000000000000000000000000000010", -- SP
+                                    -- "00000000000000000000000000000100", -- ALU RESULT
 
-                                    "00000000000000000000000000001000", -- RDes 
-                                    "00000000000000000000000000000110", -- RSrc2 (don't use)
+                                    -- "00000000000000000000000000001000", -- RDes 
+                                    -- "00000000000000000000000000000110", -- RSrc2 (don't use)
 
-                                    "001", -- RDesAddress 
-                                    "010", -- RSrc1Address
-                                    "100", -- RSrc2Address
+                                    -- "001", -- RDesAddress 
+                                    -- "010", -- RSrc1Address
+                                    -- "100", -- RSrc2Address
 
-                                    "00000000000000000000000000001000", -- DATA READ 2
+                                    -- "00000000000000000000000000001000", -- DATA READ 2
 
                                     -- Data from nassar
-                                    -- EXMEM_CONTROL_SIGNALS_OUT,
-                                    -- '0',
-                                    -- '0',
-                                    -- EXMEM_PC_OUT,
-                                    -- "00000000000000000000000000000000",
-                                    -- EXMEM_ALU_RESULT_OUT,
+                                    EXMEM_CONTROL_SIGNALS_OUT,
+                                    '0',
+                                    '0',
+                                    EXMEM_PC_OUT,
+                                    "00000000000000000000000000000000",
+                                    EXMEM_ALU_RESULT_OUT,
 
-                                    -- EXMEM_Rdst_OUT ,
-                                    -- EXMEM_Rsrc2_OUT ,
+                                    EXMEM_Rdst_OUT ,
+                                    EXMEM_Rsrc2_OUT ,
 
-                                    -- EXMEM_Rdst_address_OUT ,
-                                    -- EXMEM_Rsrc1_address_OUT ,
-                                    -- EXMEM_Rsrc2_address_OUT ,
+                                    EXMEM_Rdst_address_OUT ,
+                                    EXMEM_Rsrc1_address_OUT ,
+                                    EXMEM_Rsrc2_address_OUT ,
 
-                                    -- EXMEM_Rsrc2_OUT,
+                                    EXMEM_Rsrc2_OUT,
 
                                     -- Outputs
                                     RDesDataOutMemory,
