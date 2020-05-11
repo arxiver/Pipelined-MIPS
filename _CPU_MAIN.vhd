@@ -782,7 +782,7 @@ MemoryStage : MemoryEnt PORT MAP(
                                     '0',
                                     '0',
                                     EXMEM_PC_OUT,
-                                    "00000000000000000000000000000000",
+                                    SPSofyan,
                                     EXMEM_ALU_RESULT_OUT,
 
                                     EXMEM_Rdst_OUT ,
