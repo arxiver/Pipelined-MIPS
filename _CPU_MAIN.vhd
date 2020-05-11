@@ -345,6 +345,14 @@ COMPONENT TriStateEnt is
 );
 END COMPONENT;
 
+COMPONENT TriStateSPEnt is
+    Port(
+    EN : in std_logic;
+    X : IN std_logic_vector(31 downto 0);
+    F : OUT std_logic_vector(31 downto 0)
+);
+END COMPONENT;
+
 -----------------------------------------------------------------------
 
 --------------------   SIGNALS   ------------------------
@@ -499,15 +507,22 @@ SIGNAL ControlSignalsOutWB : std_logic_vector(26 DOWNTO 0);
 SIGNAL Mux10OutWB : std_logic_vector(31 DOWNTO 0);
 SIGNAL SPOutWB : std_logic_vector(31 DOWNTO 0);
 SIGNAL IntOutWB : std_logic;
+----------------------------- Tri State Signals -------------------------
+SIGNAL SPSignal : std_logic;
+
+----------------------------- Test ----------------------------------
+SIGNAL ControlSignalSignal : std_logic_vector(26 downto 0);
+
 --------------------------------
 signal STALL_TO_FECTH_COMPELETE : std_logic ; 
 signal DS_Rdst_address : std_logic_vector (2 DOWNTO 0);
 signal DS_Rsrc1_address : std_logic_vector (2 DOWNTO 0);
 signal DS_Rsrc2_address : std_logic_vector (2 DOWNTO 0);
 --------------------------------
+-- SIGNAL SPSofyan : std_logic_vector(31 DOWNTO 0);
+SIGNAL SPSofyan : std_logic_vector(31 DOWNTO 0) := "00000000000000000000111110100000";
 
 begin
-
 -- first stage : FETCH STAGE
 FETCH_STAGE_INSTANCE : fetch_stage port map(
     initial => GLOBAL_INITAIL,
@@ -745,18 +760,18 @@ MemoryStage : MemoryEnt PORT MAP(
                                     CLK, 
                                     '1', -- ENABLE 
 
-                                    -- Data to test my work
-                                    -- "000000000001010010000000001", -- CONTROL SIGNAL 
+                                    -- -- Data to test my work
+                                    -- ControlSignalSignal, -- CONTROL SIGNAL 
                                     -- '0',    -- Int
                                     -- '0',    -- call
                                     -- "00000000000000000000000000000001", -- PC
-                                    -- "00000000000000000000000000000010", -- SP
-                                    -- "00000000000000000000000000000100", -- ALU RESULT
+                                    -- SPSofyan, -- SP
+                                    -- "00000000000000000000000000001000", -- ALU RESULT
 
                                     -- "00000000000000000000000000001000", -- RDes 
                                     -- "00000000000000000000000000000110", -- RSrc2 (don't use)
 
-                                    -- "001", -- RDesAddress 
+                                    -- "101", -- RDesAddress 
                                     -- "010", -- RSrc1Address
                                     -- "100", -- RSrc2Address
 
@@ -861,7 +876,7 @@ WBStage : WBEnt PORT MAP(
 ------------------------------ Tri State -------------------------------
 
 TriState1 : TriStateEnt PORT MAP(ControlSignalsOutWB(0),Mux10OutWB,OUTPORT);
-
+-- TriState2 : TriStateSPEnt PORT MAP(SPSignal,SPOutWB,SPSofyan);
 
 
 ---------------------------- WB output's logic --------------------------
@@ -876,5 +891,8 @@ WB_WR_ADDRESS_1 <= RSrcOut1WB;
 WB_WR_DATA_1    <= RDesDataOutWB;
 
 WB_SWAP_EN <= ControlSignalsOutWB(15);
+SPSignal <= ControlSignalsOutWB(16) OR IntOutWB;
+
+SPSofyan <= SPOutWB when SPSignal = '1';
 
 end architecture;

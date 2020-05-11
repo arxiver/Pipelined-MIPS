@@ -6,7 +6,7 @@ use ieee.numeric_std.all;
 
 entity RamEnt is
     GENERIC (
-        ArraySize : integer := 2000;
+        ArraySize : integer := 4000;
         n : integer := 32
     );
     port(

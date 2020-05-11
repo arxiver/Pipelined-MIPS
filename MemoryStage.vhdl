@@ -101,7 +101,7 @@ BEGIN
             MemR <= ControlSignals(14);
 
             -- MUXES SELECTORS
-            SMux6 <= (NOT Int) OR IncrementOrDecrement;
+            SMux6 <= Int OR IncrementOrDecrement;
             SMux7 <= SPSignal OR Int;
 
             -- MUXES DATA
