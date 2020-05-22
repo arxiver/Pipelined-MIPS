@@ -159,6 +159,7 @@ end component;
 
 
 -------------------------- Execute Stage component -----------------------------
+
 component Execute_Stage_Entity is 
 port(
 --ID/EX INPUTS
@@ -171,6 +172,7 @@ IDEX_EA_IMM_DATA :in  std_logic_vector (31 downto 0);
 IDEX_Rdst_address :in  std_logic_vector (2 downto 0);
 IDEX_Rsrc1_address :in  std_logic_vector (2 downto 0);
 IDEX_Rsrc2_address :in  std_logic_vector (2 downto 0); 
+ID_EX_OPCODE : in std_logic_vector (3 downto 0); 
 
 --EX/MEM Outputs
 EXMEM_ALU_RESULT:out  std_logic_vector (31 downto 0);
@@ -181,6 +183,7 @@ EXMEM_Rsrc2 :out  std_logic_vector (31 downto 0);
 EXMEM_Rdst_address :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address :out  std_logic_vector (2 downto 0); 
+EX_MEM_OPCODE : out std_logic_vector (3 downto 0); 
 
 --Forwarding data
 Mem_Forwarding , WB_Forwarding: in std_logic_vector (31 downto 0) ;
@@ -202,9 +205,6 @@ Reset: in std_logic);
 
 end component Execute_Stage_Entity;
 
-
--------------------------- EXMEM BUFFER component -----------------------------
-
 component EX_Buffer_Entity is 
 port(
 EXMEM_ALU_RESULT_IN:in  std_logic_vector (31 downto 0);
@@ -215,6 +215,7 @@ EXMEM_Rsrc2_IN :in  std_logic_vector (31 downto 0);
 EXMEM_Rdst_address_IN :in  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address_IN :in  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address_IN :in  std_logic_vector (2 downto 0); 
+EXMEM_OP_CODE_IN  :in  std_logic_vector (3 downto 0); 
 
 EXMEM_ALU_RESULT_OUT:out  std_logic_vector (31 downto 0);
 EXMEM_CONTROL_SIGNALS_OUT :out std_logic_vector (26 downto 0);
@@ -224,14 +225,16 @@ EXMEM_Rsrc2_OUT :out  std_logic_vector (31 downto 0);
 EXMEM_Rdst_address_OUT :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address_OUT :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address_OUT :out  std_logic_vector (2 downto 0); 
+EXMEM_OP_CODE_OUT  :out  std_logic_vector (3 downto 0); 
 
 Wr,clk,reset : in std_logic);
 end component EX_Buffer_Entity;
 
+
 -------------------------- Memory Stage component -----------------------------
 COMPONENT MemoryEnt IS
     PORT(
-            --  For entity
+              --  For entity
             Clk,Enable: IN std_logic;
 
             -- Signals
@@ -239,7 +242,8 @@ COMPONENT MemoryEnt IS
             Int,Call: IN std_logic;
 
             -- Addresses 
-            PC,SP,ALUResult: IN std_logic_vector(31 DOWNTO 0);
+            PC,SP,ALUResult: IN std_logic_vector(n-1 DOWNTO 0);
+
 
             RDesData  : IN std_logic_vector(31 DOWNTO 0);
             RSrc2Data : IN std_logic_vector(31 DOWNTO 0);
@@ -249,7 +253,10 @@ COMPONENT MemoryEnt IS
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
 
             -- Data
-            DataRead2: IN std_logic_vector(31 DOWNTO 0);
+            DataRead2: IN std_logic_vector(n-1 DOWNTO 0);
+
+	    -- Data
+  	   OPCODE:IN std_logic_vector(3 DOWNTO 0);
 
             -- Outputs
             RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
@@ -259,10 +266,11 @@ COMPONENT MemoryEnt IS
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
 
-            MemOut: OUT std_logic_vector(31 DOWNTO 0);
-            SPOut: OUT std_logic_vector(31 DOWNTO 0);
-            ALUResultOut: OUT std_logic_vector(31 DOWNTO 0);
-            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0)
+            MemOut: OUT std_logic_vector(n-1 DOWNTO 0);
+            SPOut: OUT std_logic_vector(n-1 DOWNTO 0);
+            ALUResultOut: OUT std_logic_vector(n-1 DOWNTO 0);
+            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0);
+            OPCODEOut:Out std_logic_vector(3 DOWNTO 0)
 
         );
 END COMPONENT;
@@ -274,7 +282,7 @@ COMPONENT MemBufferEnt IS
             -- Inputs
             Clk,Reset,Enable : IN std_logic;
             ControlSignals : IN std_logic_vector(26 DOWNTO 0);
-            SP,MemOut,ALUResult : IN std_logic_vector(31 DOWNTO 0);
+            SP,MemOut,ALUResult : IN std_logic_vector(n-1 DOWNTO 0);
 
             RDesData  : IN std_logic_vector(31 DOWNTO 0);
             RSrc2Data : IN std_logic_vector(31 DOWNTO 0);
@@ -283,17 +291,21 @@ COMPONENT MemBufferEnt IS
             RSrc1 : IN std_logic_vector(2 DOWNTO 0);
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
 
-            -- Outputs
+            OP_CODE : IN std_logic_vector(3 DOWNTO 0);
 
+            -- Outputs
             RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
             RSrc2DataOut : OUT std_logic_vector(31 DOWNTO 0);
 
             RDesOut : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
+            
 
             ControlSignalsOut: OUT std_logic_vector(26 DOWNTO 0);
-            SPOut,MemOutOut,ALUResultOut : OUT std_logic_vector(31 DOWNTO 0)
+            SPOut,MemOutOut,ALUResultOut : OUT std_logic_vector(n-1 DOWNTO 0);
+
+            OP_CODE_OUT : OUT std_logic_vector(3 DOWNTO 0)
         );
 END COMPONENT;
 
@@ -336,6 +348,27 @@ COMPONENT WBEnt IS
             -- WRE : OUT std_logic
         );
 END COMPONENT;
+
+------------------------Forwarding unit--------------------------
+
+component Forwarding_Unit_Entity is 
+port(
+EX_MEM_Rdst_Address,
+MEM_WB_Rdst_Address,
+ALU_Rsrc1_Address,
+ALU_Rsrc2_Address: in std_logic_vector (31 downto 0);
+
+EX_MEM_OPCODE,
+MEM_WB_OPCODE,
+ALU_OPCODE : in std_logic_vector(4 downto 0);
+
+Rsrc1_Selector,
+Rsrc2_Selector : out std_logic_vector(1 downto 0)
+
+);
+end component Forwarding_Unit_Entity;
+
+-------------------------------tri state-------------------------------
 
 COMPONENT TriStateEnt is
     Port(
@@ -435,7 +468,7 @@ SIGNAL EXMEM_Rsrc2  : std_logic_vector(31 DOWNTO 0);
 SIGNAL EXMEM_Rdst_address  : std_logic_vector(2 DOWNTO 0);
 SIGNAL EXMEM_Rsrc1_address  : std_logic_vector(2 DOWNTO 0);
 SIGNAL EXMEM_Rsrc2_address  : std_logic_vector(2 DOWNTO 0);
-
+SIGNAL EX_MEM_OPCODE  : std_logic_vector(3 DOWNTO 0);
 --Forwarding data input
 SIGNAL Mem_Forwarding : std_logic_vector(31 DOWNTO 0);
 SIGNAL WB_Forwarding : std_logic_vector(31 DOWNTO 0);
@@ -464,6 +497,7 @@ SIGNAL EXMEM_Rsrc2_OUT : std_logic_vector(31 DOWNTO 0);
 SIGNAL EXMEM_Rdst_address_OUT : std_logic_vector(2 DOWNTO 0);
 SIGNAL EXMEM_Rsrc1_address_OUT : std_logic_vector(2 DOWNTO 0);
 SIGNAL EXMEM_Rsrc2_address_OUT : std_logic_vector(2 DOWNTO 0);
+SIGNAL EXMEM_OPCODE_OUT : std_logic_vector(3 DOWNTO 0);
 
 SIGNAL EX_MEM_BUFFER_WRITE : std_logic;
 

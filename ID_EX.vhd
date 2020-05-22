@@ -41,6 +41,7 @@ FLUSH_JMP : in std_logic ;
 FLUSH_FUNC : in std_logic ;
 FLUSH_JZ  : in std_logic ;
 
+
 -- OUTPUTS
 OUT_CONTROL_SIGNALS : out std_logic_vector (26 downto 0);
 PC_OUT : out std_logic_vector (31 downto 0);
@@ -51,6 +52,7 @@ EA_IMM_DATA_OUT : out std_logic_vector (31 downto 0);
 Rdst_address_OUT : out std_logic_vector (2 downto 0);
 Rsrc1_address_OUT : out std_logic_vector (2 downto 0);
 Rsrc2_address_OUT : out std_logic_vector (2 downto 0)
+
 );
 end entity;
 
@@ -103,5 +105,7 @@ REG_EA_IMM_DATA : reg generic map (32) port map(CLK, reset_stall, ENABLE, EA_IMM
 REG_Rdst_address : reg generic map (3) port map(CLK, reset_stall, ENABLE, Rdst_address ,Rdst_address_OUT);
 REG_Rsrc1_address : reg generic map (3) port map(CLK, reset_stall, ENABLE, Rsrc1_address ,Rsrc1_address_OUT);
 REG_Rsrc2_address : reg generic map (3) port map(CLK, reset_stall, ENABLE, Rsrc2_address ,Rsrc2_address_OUT);
+
+
 
 end architecture;

@@ -23,11 +23,18 @@ ENTITY MemoryEnt IS
             -- Data
             DataRead2: IN std_logic_vector(n-1 DOWNTO 0);
 
+            --DST ADDress
+            RdstAdd:IN std_logic_vector(2 DOWNTO 0);
+            --OP COde
+            OPCODE:IN std_logic_vector(3 DOWNTO 0);
+
             -- Outputs
             MemOut: OUT std_logic_vector(n-1 DOWNTO 0);
             SPOut: OUT std_logic_vector(n-1 DOWNTO 0);
             ALUResultOut: OUT std_logic_vector(n-1 DOWNTO 0);
-            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0)
+            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0);
+            RdstAddOut:Out std_logic_vector(2 DOWNTO 0);
+            OPCODEOut:Out std_logic_vector(3 DOWNTO 0)
 
         );
 END ENTITY;
@@ -94,6 +101,9 @@ BEGIN
             SPOut <= OutMux6;
             ALUResultOut <= ALUResult;
             ControlSignalsOut <= ControlSignals;
+            RdstAddOut <= RdstAdd;
+            OPCODEOut <= OPCODE;
+
         END IF;
     END PROCESS;
     
