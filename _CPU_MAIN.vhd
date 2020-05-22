@@ -143,7 +143,7 @@ WB : in std_logic ;
 FLUSH_JMP : in std_logic ;
 FLUSH_FUNC : in std_logic ;
 FLUSH_JZ  : in std_logic ;
-
+IR_OPCODE : in std_logic_vector (4 downto 0);
 -- OUTPUTS
 OUT_CONTROL_SIGNALS : out std_logic_vector (26 downto 0);
 PC_OUT : out std_logic_vector (31 downto 0);
@@ -153,7 +153,8 @@ Rsrc2_OUT : out std_logic_vector (31 downto 0);
 EA_IMM_DATA_OUT : out std_logic_vector (31 downto 0);
 Rdst_address_OUT : out std_logic_vector (2 downto 0);
 Rsrc1_address_OUT : out std_logic_vector (2 downto 0);
-Rsrc2_address_OUT : out std_logic_vector (2 downto 0)
+Rsrc2_address_OUT : out std_logic_vector (2 downto 0);
+IR_OPCODE_OUT : out std_logic_vector (4 downto 0)
 );
 end component;
 
@@ -655,6 +656,7 @@ ID_EX_INSTANCE : ID_EX port map (
     FLUSH_JMP           => CU_FLUSH_JMP,
     FLUSH_FUNC          => CU_FLUSH_FUNC, 
     FLUSH_JZ            => CU_FLUSH_JZ,
+    IR_OPCODE           => IFID_IR(31 downto 27),
     -- OUTPUTS
     OUT_CONTROL_SIGNALS => IDEX_OUT_CONTROL_SIGNALS,
     PC_OUT              => IDEX_PC_OUT,
@@ -664,7 +666,8 @@ ID_EX_INSTANCE : ID_EX port map (
     EA_IMM_DATA_OUT     => IDEX_EA_IMM_DATA_OUT,
     Rdst_address_OUT    => IDEX_Rdst_address_OUT,
     Rsrc1_address_OUT   => IDEX_Rsrc1_address_OUT,
-    Rsrc2_address_OUT   => IDEX_Rsrc2_address_OUT
+    Rsrc2_address_OUT   => IDEX_Rsrc2_address_OUT,
+    IR_OPCODE_OUT       => open
     );
 
 ------------------------------------------------------------------
