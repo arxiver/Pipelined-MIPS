@@ -1,10 +1,31 @@
-force -freeze sim:/cpu_main/CLK 1 0, 0 {50 ns} -r 100
+vsim -gui work.cpu_main
+add wave -position end sim:/cpu_main/*
 force -freeze sim:/cpu_main/GLOBAL_ENABLE 1 0
 force -freeze sim:/cpu_main/GLOBAL_RESET 0 0
 force -freeze sim:/cpu_main/GLOBAL_INITAIL 1 0
-
+force -freeze sim:/cpu_main/In_Port 32'h5 0
+force -freeze sim:/cpu_main/CLK 1 0, 0 {50 ns} -r 100
 run
 force -freeze sim:/cpu_main/GLOBAL_INITAIL 0 0
-
+run
 run
 
+
+add wave -position insertpoint sim:/cpu_main/FETCH_STAGE_INSTANCE/*
+add wave -position insertpoint sim:/cpu_main/FETCH_BUFFER_INSTANCE/*
+add wave -position insertpoint sim:/cpu_main/CONTROL_UNIT_INSTANCE/*
+add wave -position insertpoint sim:/cpu_main/DECODE_STAGE_INSTANCE/*
+add wave -position insertpoint  \
+sim:/cpu_main/DECODE_STAGE_INSTANCE/REG_FILE/reg_file
+add wave -position insertpoint sim:/cpu_main/ID_EX_INSTANCE/*
+add wave -position insertpoint sim:/cpu_main/ExecuteStage/*
+add wave -position insertpoint sim:/cpu_main/EXMEM_LABEL/*
+add wave -position insertpoint sim:/cpu_main/MemoryStage/*
+add wave -position insertpoint sim:/cpu_main/MemoryBuffer/*
+add wave -position insertpoint sim:/cpu_main/WBStage/*
+add wave -position insertpoint  \
+sim:/cpu_main/CLK
+add wave -position insertpoint  \
+sim:/cpu_main/GLOBAL_ENABLE \
+sim:/cpu_main/GLOBAL_INITAIL \
+sim:/cpu_main/GLOBAL_RESET
