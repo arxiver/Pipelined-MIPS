@@ -9,7 +9,7 @@ port(
 EX_MEM_Rdst_Address,
 MEM_WB_Rdst_Address,
 ALU_Rsrc1_Address,
-ALU_Rsrc2_Address: in std_logic_vector (31 downto 0);
+ALU_Rsrc2_Address: in std_logic_vector (2 downto 0);
 
 EX_MEM_OPCODE,
 MEM_WB_OPCODE,

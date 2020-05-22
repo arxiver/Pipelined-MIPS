@@ -20,7 +20,7 @@ ENTITY MemBufferEnt IS
             RSrc1 : IN std_logic_vector(2 DOWNTO 0);
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
 
-            OP_CODE : IN std_logic_vector(3 DOWNTO 0);
+            OP_CODE : IN std_logic_vector(4 DOWNTO 0);
 
             -- Outputs
             RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
@@ -34,7 +34,7 @@ ENTITY MemBufferEnt IS
             ControlSignalsOut: OUT std_logic_vector(26 DOWNTO 0);
             SPOut,MemOutOut,ALUResultOut : OUT std_logic_vector(n-1 DOWNTO 0);
 
-            OP_CODE_OUT : OUT std_logic_vector(3 DOWNTO 0)
+            OP_CODE_OUT : OUT std_logic_vector(4 DOWNTO 0)
         );
 END ENTITY;
 
@@ -66,6 +66,6 @@ BEGIN
     RSrc1Module       : RegEnt GENERIC MAP(3) PORT MAP(Clk,Reset,Enable,RSrc1,RSrcOut1);
     RSrc2Module       : RegEnt GENERIC MAP(3) PORT MAP(Clk,Reset,Enable,RSrc2,RSrcOut2);
 
-    OpCOdeModule       : RegEnt GENERIC MAP(3) PORT MAP(Clk,Reset,Enable,OP_CODE,OP_CODE_OUT);
+    OpCOdeModule       : RegEnt GENERIC MAP(5) PORT MAP(Clk,Reset,Enable,OP_CODE,OP_CODE_OUT);
 
 END ARCHITECTURE;

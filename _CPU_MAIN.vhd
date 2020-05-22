@@ -6,7 +6,8 @@ GLOBAL_ENABLE : in std_logic;
 GLOBAL_RESET : in std_logic;
 GLOBAL_INITAIL : in std_logic;
 CLK : in std_logic ;
-OUTPORT : out std_logic_vector(31 DOWNTO 0)
+OUTPORT : out std_logic_vector(31 DOWNTO 0);
+FLAGS : inout std_logic_vector(3 DOWNTO 0)
 );
 end entity;
 
@@ -173,7 +174,7 @@ IDEX_EA_IMM_DATA :in  std_logic_vector (31 downto 0);
 IDEX_Rdst_address :in  std_logic_vector (2 downto 0);
 IDEX_Rsrc1_address :in  std_logic_vector (2 downto 0);
 IDEX_Rsrc2_address :in  std_logic_vector (2 downto 0); 
-ID_EX_OPCODE : in std_logic_vector (3 downto 0); 
+ID_EX_OPCODE : in std_logic_vector (4 downto 0); 
 
 --EX/MEM Outputs
 EXMEM_ALU_RESULT:out  std_logic_vector (31 downto 0);
@@ -184,7 +185,7 @@ EXMEM_Rsrc2 :out  std_logic_vector (31 downto 0);
 EXMEM_Rdst_address :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address :out  std_logic_vector (2 downto 0); 
-EX_MEM_OPCODE : out std_logic_vector (3 downto 0); 
+EX_MEM_OPCODE : out std_logic_vector (4 downto 0); 
 
 --Forwarding data
 Mem_Forwarding , WB_Forwarding: in std_logic_vector (31 downto 0) ;
@@ -216,7 +217,7 @@ EXMEM_Rsrc2_IN :in  std_logic_vector (31 downto 0);
 EXMEM_Rdst_address_IN :in  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address_IN :in  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address_IN :in  std_logic_vector (2 downto 0); 
-EXMEM_OP_CODE_IN  :in  std_logic_vector (3 downto 0); 
+EXMEM_OP_CODE_IN  :in  std_logic_vector (4 downto 0); 
 
 EXMEM_ALU_RESULT_OUT:out  std_logic_vector (31 downto 0);
 EXMEM_CONTROL_SIGNALS_OUT :out std_logic_vector (26 downto 0);
@@ -226,7 +227,7 @@ EXMEM_Rsrc2_OUT :out  std_logic_vector (31 downto 0);
 EXMEM_Rdst_address_OUT :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address_OUT :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address_OUT :out  std_logic_vector (2 downto 0); 
-EXMEM_OP_CODE_OUT  :out  std_logic_vector (3 downto 0); 
+EXMEM_OP_CODE_OUT  :out  std_logic_vector (4 downto 0); 
 
 Wr,clk,reset : in std_logic);
 end component EX_Buffer_Entity;
@@ -243,7 +244,7 @@ COMPONENT MemoryEnt IS
             Int,Call: IN std_logic;
 
             -- Addresses 
-            PC,SP,ALUResult: IN std_logic_vector(n-1 DOWNTO 0);
+            PC,SP,ALUResult: IN std_logic_vector(31 DOWNTO 0);
 
 
             RDesData  : IN std_logic_vector(31 DOWNTO 0);
@@ -254,10 +255,10 @@ COMPONENT MemoryEnt IS
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
 
             -- Data
-            DataRead2: IN std_logic_vector(n-1 DOWNTO 0);
+            DataRead2: IN std_logic_vector(31 DOWNTO 0);
 
 	    -- Data
-  	   OPCODE:IN std_logic_vector(3 DOWNTO 0);
+  	   OPCODE:IN std_logic_vector(4 DOWNTO 0);
 
             -- Outputs
             RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
@@ -267,11 +268,11 @@ COMPONENT MemoryEnt IS
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
 
-            MemOut: OUT std_logic_vector(n-1 DOWNTO 0);
-            SPOut: OUT std_logic_vector(n-1 DOWNTO 0);
-            ALUResultOut: OUT std_logic_vector(n-1 DOWNTO 0);
+            MemOut: OUT std_logic_vector(31 DOWNTO 0);
+            SPOut: OUT std_logic_vector(31 DOWNTO 0);
+            ALUResultOut: OUT std_logic_vector(31 DOWNTO 0);
             ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0);
-            OPCODEOut:Out std_logic_vector(3 DOWNTO 0)
+            OPCODEOut:Out std_logic_vector(4 DOWNTO 0)
 
         );
 END COMPONENT;
@@ -283,7 +284,7 @@ COMPONENT MemBufferEnt IS
             -- Inputs
             Clk,Reset,Enable : IN std_logic;
             ControlSignals : IN std_logic_vector(26 DOWNTO 0);
-            SP,MemOut,ALUResult : IN std_logic_vector(n-1 DOWNTO 0);
+            SP,MemOut,ALUResult : IN std_logic_vector(31 DOWNTO 0);
 
             RDesData  : IN std_logic_vector(31 DOWNTO 0);
             RSrc2Data : IN std_logic_vector(31 DOWNTO 0);
@@ -292,7 +293,7 @@ COMPONENT MemBufferEnt IS
             RSrc1 : IN std_logic_vector(2 DOWNTO 0);
             RSrc2 : IN std_logic_vector(2 DOWNTO 0);
 
-            OP_CODE : IN std_logic_vector(3 DOWNTO 0);
+            OP_CODE : IN std_logic_vector(4 DOWNTO 0);
 
             -- Outputs
             RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
@@ -304,9 +305,9 @@ COMPONENT MemBufferEnt IS
             
 
             ControlSignalsOut: OUT std_logic_vector(26 DOWNTO 0);
-            SPOut,MemOutOut,ALUResultOut : OUT std_logic_vector(n-1 DOWNTO 0);
+            SPOut,MemOutOut,ALUResultOut : OUT std_logic_vector(31 DOWNTO 0);
 
-            OP_CODE_OUT : OUT std_logic_vector(3 DOWNTO 0)
+            OP_CODE_OUT : OUT std_logic_vector(4 DOWNTO 0)
         );
 END COMPONENT;
 
@@ -357,7 +358,7 @@ port(
 EX_MEM_Rdst_Address,
 MEM_WB_Rdst_Address,
 ALU_Rsrc1_Address,
-ALU_Rsrc2_Address: in std_logic_vector (31 downto 0);
+ALU_Rsrc2_Address: in std_logic_vector (2 downto 0);
 
 EX_MEM_OPCODE,
 MEM_WB_OPCODE,
@@ -428,6 +429,7 @@ signal IDEX_EA_IMM_DATA_OUT :  std_logic_vector (31 downto 0);
 signal IDEX_Rdst_address_OUT :  std_logic_vector (2 downto 0);
 signal IDEX_Rsrc1_address_OUT :  std_logic_vector (2 downto 0);
 signal IDEX_Rsrc2_address_OUT :  std_logic_vector (2 downto 0); 
+signal IDEX_IR_OPCODE_OUT:  std_logic_vector (4 downto 0); 
 ------------------------------------------------------------
 
 
@@ -469,7 +471,7 @@ SIGNAL EXMEM_Rsrc2  : std_logic_vector(31 DOWNTO 0);
 SIGNAL EXMEM_Rdst_address  : std_logic_vector(2 DOWNTO 0);
 SIGNAL EXMEM_Rsrc1_address  : std_logic_vector(2 DOWNTO 0);
 SIGNAL EXMEM_Rsrc2_address  : std_logic_vector(2 DOWNTO 0);
-SIGNAL EX_MEM_OPCODE  : std_logic_vector(3 DOWNTO 0);
+SIGNAL EX_MEM_OPCODE  : std_logic_vector(4 DOWNTO 0);
 --Forwarding data input
 SIGNAL Mem_Forwarding : std_logic_vector(31 DOWNTO 0);
 SIGNAL WB_Forwarding : std_logic_vector(31 DOWNTO 0);
@@ -481,8 +483,6 @@ SIGNAL Forwarding_Selectors2  : std_logic_vector(1 DOWNTO 0);
 --In Port Data
 SIGNAL In_Port: std_logic_vector (31 downto 0) ;
 
---flags
-SIGNAL flags : std_logic_vector (3 downto 0) ; 
 
 --Enable
 SIGNAL Execute_EN : std_logic ; 
@@ -498,7 +498,7 @@ SIGNAL EXMEM_Rsrc2_OUT : std_logic_vector(31 DOWNTO 0);
 SIGNAL EXMEM_Rdst_address_OUT : std_logic_vector(2 DOWNTO 0);
 SIGNAL EXMEM_Rsrc1_address_OUT : std_logic_vector(2 DOWNTO 0);
 SIGNAL EXMEM_Rsrc2_address_OUT : std_logic_vector(2 DOWNTO 0);
-SIGNAL EXMEM_OPCODE_OUT : std_logic_vector(3 DOWNTO 0);
+SIGNAL EXMEM_OPCODE_OUT : std_logic_vector(4 DOWNTO 0);
 
 SIGNAL EX_MEM_BUFFER_WRITE : std_logic;
 
@@ -516,6 +516,7 @@ SIGNAL MemOutMemory: std_logic_vector(31 DOWNTO 0);
 SIGNAL SPOutMemory: std_logic_vector(31 DOWNTO 0);
 SIGNAL ALUResultOutMemory: std_logic_vector(31 DOWNTO 0);
 SIGNAL ControlSignalsOutMemory: std_logic_vector(26 DOWNTO 0);
+SIGNAL MEMSTAGE_OPCODE_OUT: std_logic_vector(4 DOWNTO 0);
 
 ----------------------- Memory Buffer ------------------------
 SIGNAL RDesDataOutBuffer : std_logic_vector(31 DOWNTO 0);
@@ -529,6 +530,7 @@ SIGNAL ControlSignalsOutBuffer : std_logic_vector(26 DOWNTO 0);
 SIGNAL SPOutBuffer : std_logic_vector(31 DOWNTO 0);
 SIGNAL MemOutBuffer: std_logic_vector(31 DOWNTO 0);
 SIGNAL ALUResultOutBuffer : std_logic_vector(31 DOWNTO 0);
+SIGNAL MEMWB_OPCODE_OUT : std_logic_vector(4 DOWNTO 0);
 
 ------------------------ WB Stage -----------------------
 SIGNAL RDesDataOutWB : std_logic_vector(31 DOWNTO 0);
@@ -701,7 +703,7 @@ ID_EX_INSTANCE : ID_EX port map (
     Rdst_address_OUT    => IDEX_Rdst_address_OUT,
     Rsrc1_address_OUT   => IDEX_Rsrc1_address_OUT,
     Rsrc2_address_OUT   => IDEX_Rsrc2_address_OUT,
-    IR_OPCODE_OUT       => open
+    IR_OPCODE_OUT       => IDEX_IR_OPCODE_OUT
     );
 
 ------------------------------------------------------------------
@@ -720,6 +722,7 @@ ExecuteStage : Execute_Stage_Entity PORT MAP (
                                     IDEX_Rdst_address_OUT ,
                                     IDEX_Rsrc1_address_OUT ,
                                     IDEX_Rsrc2_address_OUT ,
+                                    IDEX_IR_OPCODE_OUT,
 
                                     --EX/MEM Outputs
                                     EXMEM_ALU_RESULT ,
@@ -730,10 +733,10 @@ ExecuteStage : Execute_Stage_Entity PORT MAP (
                                     EXMEM_Rdst_address  ,
                                     EXMEM_Rsrc1_address  ,
                                     EXMEM_Rsrc2_address  ,
-
+                                    EX_MEM_OPCODE,
                                     --forwarded data
-                                    Mem_Forwarding ,
-                                    WB_Forwarding ,
+                                    EXMEM_Rdst_OUT ,
+                                    Mux10OutWB ,
 
                                     --forwarding unit selectors
                                     Forwarding_Selectors1 ,
@@ -743,7 +746,7 @@ ExecuteStage : Execute_Stage_Entity PORT MAP (
                                     In_Port ,
                                     
                                     --flags
-                                    flags,
+                                    FLAGS,
 
                                     --CLK
                                     CLK,
@@ -768,7 +771,7 @@ EXMEM_LABEL : EX_Buffer_Entity PORT MAP (
                                     EXMEM_Rdst_address  ,
                                     EXMEM_Rsrc1_address ,
                                     EXMEM_Rsrc2_address ,
-
+                                    EX_MEM_OPCODE,
                                     --Buffer outputs
                                     EXMEM_ALU_RESULT_OUT,
                                     EXMEM_CONTROL_SIGNALS_OUT ,
@@ -778,7 +781,7 @@ EXMEM_LABEL : EX_Buffer_Entity PORT MAP (
                                     EXMEM_Rdst_address_OUT ,
                                     EXMEM_Rsrc1_address_OUT ,
                                     EXMEM_Rsrc2_address_OUT ,
-
+                                    EXMEM_OPCODE_OUT,
                                     --Write enable
                                     '1',
 
@@ -830,7 +833,8 @@ MemoryStage : MemoryEnt PORT MAP(
                                     EXMEM_Rsrc2_address_OUT ,
 
                                     EXMEM_Rsrc2_OUT,
-
+                                    EXMEM_OPCODE_OUT,
+                                    
                                     -- Outputs
                                     RDesDataOutMemory,
                                     RSrc2DataOutMemory,
@@ -842,7 +846,8 @@ MemoryStage : MemoryEnt PORT MAP(
                                     MemOutMemory,
                                     SPOutMemory,
                                     ALUResultOutMemory,
-                                    ControlSignalsOutMemory
+                                    ControlSignalsOutMemory,
+                                    MEMSTAGE_OPCODE_OUT
                                 ); 
 
 ----------------------- Memory Buffer ------------------------------
@@ -862,7 +867,7 @@ MemoryBuffer : MemBufferEnt PORT MAP(
                                         RDesOutMemory,
                                         RSrcOut1Memory,
                                         RSrcOut2Memory,
-
+                                        MEMSTAGE_OPCODE_OUT,
                                         -- Outputs
                                         RDesDataOutBuffer,
                                         RSrc2DataOutBuffer,
@@ -874,7 +879,8 @@ MemoryBuffer : MemBufferEnt PORT MAP(
                                         ControlSignalsOutBuffer,
                                         SPOutBuffer,
                                         MemOutBuffer,
-                                        ALUResultOutBuffer
+                                        ALUResultOutBuffer,
+                                        MEMWB_OPCODE_OUT
 );
 --------------------------- WB Stage --------------------------------
 WBStage : WBEnt PORT MAP(
@@ -915,7 +921,19 @@ WBStage : WBEnt PORT MAP(
 TriState1 : TriStateEnt PORT MAP(ControlSignalsOutWB(0),Mux10OutWB,OUTPORT);
 -- TriState2 : TriStateSPEnt PORT MAP(SPSignal,SPOutWB,SPSofyan);
 
+--------------------------------Forwarding Unit---------------------------
+ForwardingUniy: Forwarding_Unit_Entity PORT MAP(
+EXMEM_Rdst_address_OUT,
+RDesOutBuffer,
+EXMEM_Rsrc1_address,
+EXMEM_Rsrc2_address,
 
+EXMEM_OPCODE_OUT,
+MEMWB_OPCODE_OUT,
+IDEX_IR_OPCODE_OUT,
+
+Forwarding_Selectors1,
+Forwarding_Selectors2 );
 ---------------------------- WB output's logic --------------------------
 
 -- WB

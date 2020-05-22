@@ -15,7 +15,7 @@ IDEX_EA_IMM_DATA :in  std_logic_vector (31 downto 0);
 IDEX_Rdst_address :in  std_logic_vector (2 downto 0);
 IDEX_Rsrc1_address :in  std_logic_vector (2 downto 0);
 IDEX_Rsrc2_address :in  std_logic_vector (2 downto 0); 
-ID_EX_OPCODE : in std_logic_vector (3 downto 0); 
+ID_EX_OPCODE : in std_logic_vector (4 downto 0); 
 
 --EX/MEM Outputs
 EXMEM_ALU_RESULT:out  std_logic_vector (31 downto 0);
@@ -26,7 +26,7 @@ EXMEM_Rsrc2 :out  std_logic_vector (31 downto 0);
 EXMEM_Rdst_address :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address :out  std_logic_vector (2 downto 0); 
-EX_MEM_OPCODE : out std_logic_vector (3 downto 0); 
+EX_MEM_OPCODE : out std_logic_vector (4 downto 0); 
 
 --Forwarding data
 Mem_Forwarding , WB_Forwarding: in std_logic_vector (31 downto 0) ;

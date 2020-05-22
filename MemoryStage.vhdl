@@ -32,7 +32,7 @@ ENTITY MemoryEnt IS
             DataRead2: IN std_logic_vector(n-1 DOWNTO 0);
 
 	    -- Data
-  	   OPCODE:IN std_logic_vector(3 DOWNTO 0);
+  	   OPCODE:IN std_logic_vector(4 DOWNTO 0);
 
             -- Outputs
             RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
@@ -46,7 +46,7 @@ ENTITY MemoryEnt IS
             SPOut: OUT std_logic_vector(n-1 DOWNTO 0);
             ALUResultOut: OUT std_logic_vector(n-1 DOWNTO 0);
             ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0);
-            OPCODEOut:Out std_logic_vector(3 DOWNTO 0)
+            OPCODEOut:Out std_logic_vector(4 DOWNTO 0)
 
         );
 END ENTITY;
