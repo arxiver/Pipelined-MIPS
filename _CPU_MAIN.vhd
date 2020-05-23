@@ -660,7 +660,7 @@ ID_EX_INSTANCE : ID_EX port map (
     STALL_SIG           => STALL_TO_FECTH_COMPELETE,
 
     -- CONTROL SIGNALS
-    PC                  => GLOBAL_PC, 
+    PC                  => IFID_PC, 
     Rdst                => DS_RD_DATA_2_OUT,
     Rsrc1               => DS_RD_DATA_1_OUT,
     Rsrc2               => DS_RD_DATA_2_OUT,
