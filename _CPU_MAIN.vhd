@@ -7,7 +7,7 @@ GLOBAL_RESET : in std_logic;
 GLOBAL_INITAIL : in std_logic;
 CLK : in std_logic ;
 OUTPORT : out std_logic_vector(31 DOWNTO 0);
-FLAGS : inout std_logic_vector(3 DOWNTO 0):= (OTHERS => '0')
+ FLAGS: inout std_logic_vector (2 downto 0)  := (OTHERS => '0') 
 );
 end entity;
 
@@ -198,7 +198,7 @@ Forwarding_Selectors2 : in std_logic_vector (1 downto 0) ;
 In_Port: in std_logic_vector (31 downto 0) ;
 
 --flags
-flags : inout std_logic_vector (3 downto 0) ; 
+flags : inout std_logic_vector (2 downto 0) ; 
 
 --clk , enable , reset
 clk,
@@ -482,6 +482,7 @@ SIGNAL Forwarding_Selectors2  : std_logic_vector(1 DOWNTO 0);
 
 --In Port Data
 SIGNAL In_Port: std_logic_vector (31 downto 0) ;
+--In Port Data
 
 
 --Enable
@@ -752,7 +753,7 @@ ExecuteStage : Execute_Stage_Entity PORT MAP (
                                     CLK,
 
                                     --Enable
-                                    Execute_EN,
+                                    '1',
 
                                     --Reset
                                     GLOBAL_RESET

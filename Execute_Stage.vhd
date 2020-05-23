@@ -39,7 +39,7 @@ Forwarding_Selectors2 : in std_logic_vector (1 downto 0) ;
 In_Port: in std_logic_vector (31 downto 0) ;
 
 --flags
-flags : inout std_logic_vector (3 downto 0) ; 
+flags : inout std_logic_vector (2 downto 0)  ; 
 
 --clk , enable , reset
 clk,
@@ -60,7 +60,7 @@ port(
 Data1,Data2: in std_logic_vector (31 downto 0); 
 OpCode: in std_logic_vector(3 downto 0);
 enable : in std_logic;
-Flags:inout std_logic_vector(3 downto 0) ;
+Flags:inout std_logic_vector(2 downto 0) ;
 Result : out std_logic_vector(31 downto 0));
 end component ALU_ENTITY;
 -----------------------------------------------------------
@@ -125,7 +125,7 @@ Mux2      : ALU_SRC2_MUX_Entity port map (IDEX_Rsrc2 ,  --R source 1
 ALU_Label : ALU_ENTITY          port map (Src1_Mux_Output , --MUX1 OUTPUT
                                           Src2_Mux_Output , --MUX2 OUTPUT
                                           IDEX_CONTROL_SIGNALS(5 downto 2), --ALU OP CODE 
-                                          enable , --ENABLE
+                                          IDEX_CONTROL_SIGNALS(11) , --ENABLE
                                           flags , --FLAGS
                                           EXMEM_ALU_RESULT); --OUTPUT
 

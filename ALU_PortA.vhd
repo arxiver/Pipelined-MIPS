@@ -7,7 +7,7 @@ entity ALU_PortA_Entity is
 port(
 Data1,Data2: in std_logic_vector (31 downto 0) ; 
 S: in std_logic_vector(2 downto 0);
-Flags:inout std_logic_vector(3 downto 0) := (OTHERS => '0');
+Flags:inout std_logic_vector(2 downto 0):= (OTHERS => '0') ;
 F : out std_logic_vector(31 downto 0));
 
 end entity ALU_PortA_Entity;

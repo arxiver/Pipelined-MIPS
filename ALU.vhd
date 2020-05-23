@@ -9,7 +9,7 @@ port(
 Data1,Data2: in std_logic_vector (31 downto 0); 
 OpCode: in std_logic_vector(3 downto 0);
 enable : in std_logic;
-Flags:inout std_logic_vector(3 downto 0) := (OTHERS => '0');
+Flags:inout std_logic_vector(2 downto 0) := (OTHERS => '0') ;
 Result : out std_logic_vector(31 downto 0));
 
 
@@ -24,7 +24,7 @@ architecture ALU_ARCH of ALU_ENTITY is
 port(
 Data1,Data2: in std_logic_vector (31 downto 0) ; 
 S: in std_logic_vector(2 downto 0);
-Flags:inout std_logic_vector(3 downto 0) := (OTHERS => '0');
+Flags:inout std_logic_vector(2 downto 0) ;
 F : out std_logic_vector(31 downto 0));
 
 end component ALU_PortA_Entity;
@@ -35,7 +35,7 @@ end component ALU_PortA_Entity;
 port(
 Data1,Data2: in std_logic_vector (31 downto 0) ; 
 S: in std_logic_vector(2 downto 0);
-Flags : inout std_logic_vector (3 downto 0) := (OTHERS => '0'); 
+Flags : inout std_logic_vector (2 downto 0)  ; 
 F : out std_logic_vector(31 downto 0));
 end component ALU_PORTB_ENTITY;
 
@@ -43,7 +43,7 @@ end component ALU_PORTB_ENTITY;
    
     
     signal PAOUT,PBOUT  :std_logic_vector (31 downto 0);
-    signal  FA, FB, FC  :std_logic_vector (3 downto 0) := (Flags);
+    signal  FA, FB, FC  :std_logic_vector (2 downto 0);
     
     Begin
     pa:ALU_PORTA_ENTITY PORT MAP(Data1,Data2,OpCode(2 downto 0),FA,PAOUT) ;
