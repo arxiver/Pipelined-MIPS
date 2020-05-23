@@ -60,7 +60,7 @@ port(
 Data1,Data2: in std_logic_vector (31 downto 0); 
 OpCode: in std_logic_vector(3 downto 0);
 enable : in std_logic;
-Flags:inout std_logic_vector(3 downto 0) := (OTHERS => '0');
+Flags:inout std_logic_vector(3 downto 0) ;
 Result : out std_logic_vector(31 downto 0));
 end component ALU_ENTITY;
 -----------------------------------------------------------
@@ -105,16 +105,16 @@ EX_MEM_OPCODE <= ID_EX_OPCODE;--Forwarding OpCode to next buffer
 
 --Mux selecting input #1 to the ALU
 Mux1      : ALU_SRC1_MUX_Entity port map (IDEX_Rsrc1 ,    --R source 1
-                                          WB_Forwarding,  --Data farwarded from WB
                                           Mem_Forwarding , --Data forwarded from memory
+                                          WB_Forwarding,  --Data farwarded from WB
                                           Forwarding_Selectors1 , --Selectors sent from Forwarding unit
                                           Src1_Mux_Output  );  --Output
 
 --Mux selecting input #2 to the ALU
 Mux2      : ALU_SRC2_MUX_Entity port map (IDEX_Rsrc2 ,  --R source 1
                                           IDEX_EA_IMM_DATA , --Immediate or Effective address data
-                                          WB_Forwarding,  --Data farwarded from WB
                                           Mem_Forwarding , --Data forwarded from memory
+                                          WB_Forwarding,  --Data farwarded from WB
                                           In_Port , --In port data
                                           IDEX_CONTROL_SIGNALS(6) ,  --ALU SRC selector
                                           IDEX_CONTROL_SIGNALS(1) , --In port selector

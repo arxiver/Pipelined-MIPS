@@ -7,7 +7,7 @@ GLOBAL_RESET : in std_logic;
 GLOBAL_INITAIL : in std_logic;
 CLK : in std_logic ;
 OUTPORT : out std_logic_vector(31 DOWNTO 0);
-FLAGS : inout std_logic_vector(3 DOWNTO 0)
+FLAGS : inout std_logic_vector(3 DOWNTO 0):= (OTHERS => '0')
 );
 end entity;
 
@@ -735,7 +735,7 @@ ExecuteStage : Execute_Stage_Entity PORT MAP (
                                     EXMEM_Rsrc2_address  ,
                                     EX_MEM_OPCODE,
                                     --forwarded data
-                                    EXMEM_Rdst_OUT ,
+                                    EXMEM_ALU_RESULT_OUT ,
                                     Mux10OutWB ,
 
                                     --forwarding unit selectors
