@@ -45,7 +45,7 @@ architecture Forwarding_Unit_Arch of Forwarding_Unit_Entity is
     ALU_OPCODE_READ_OP <= '0' 
     when ALU_OPCODE = "00101" OR ALU_OPCODE = "00000" OR ALU_OPCODE = "10001" OR  ALU_OPCODE = "10010" 
      OR  ALU_OPCODE = "10011" OR  ALU_OPCODE = "11000" OR ALU_OPCODE = "11001" 
-     OR  ALU_OPCODE = "11011" OR  ALU_OPCODE = "11100" 
+     OR  ALU_OPCODE = "11011" OR  ALU_OPCODE = "11100" OR ALU_OPCODE ="10100" OR ALU_OPCODE ="10000"
     else '1';
     --------------------------------------------------------------------------------------------------------------------	
 

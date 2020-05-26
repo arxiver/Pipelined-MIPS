@@ -92,7 +92,7 @@ REG_FILE : register_file port map(
 EA_IMM_DATA <= zero_extended_value when EA_IMM_SEL = '0' else sign_extended_value ;
 Rsrc1_address <= IR(26 downto 24) ;
 Rsrc2_address <=  IR(23 downto 21) ;
-Rdst_address <= IR(20 downto 18) when SWAP_EN = '1' or REG_DST = '1' else IR(23 downto 21) ;
+Rdst_address <= IR(20 downto 18) when SWAP_EN = '1' or REG_DST = '1' or IR(31 downto 27) = "10001"  else IR(23 downto 21) ;
 RD_ADDRESS_2 <= IR(23 downto 21) when SWAP_EN = '0' else IR(20 downto 18) ;
 
 end architecture;

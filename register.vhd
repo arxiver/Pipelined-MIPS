@@ -14,7 +14,7 @@ end entity;
 
 architecture regarc of reg is
 begin
-process (clk,reset,enable)
+process (clk,enable)
 begin
 if (reset = '1') then q <= (OTHERS => '0');
 elsif (falling_edge(clk)) and enable = '1' then q <= d;

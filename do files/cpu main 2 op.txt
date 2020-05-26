@@ -29,3 +29,8 @@ add wave -position insertpoint  \
 sim:/cpu_main/GLOBAL_ENABLE \
 sim:/cpu_main/GLOBAL_INITAIL \
 sim:/cpu_main/GLOBAL_RESET
+add wave -position insertpoint  \
+sim:/cpu_main/DECODE_STAGE_INSTANCE/REG_FILE/reg_file
+add wave -position insertpoint  \
+sim:/cpu_main/Hazard_Detection_IF_ID_WR_EN \
+sim:/cpu_main/Hazard_Detection_Stall
