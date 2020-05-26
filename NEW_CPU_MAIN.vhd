@@ -7,7 +7,7 @@ GLOBAL_RESET : in std_logic;
 GLOBAL_INITAIL : in std_logic;
 CLK : in std_logic ;
 OUTPORT : out std_logic_vector(31 DOWNTO 0);
-FLAGS : inout std_logic_vector(3 DOWNTO 0);
+FLAGS : inout std_logic_vector(2 DOWNTO 0);
 INTERRUPT_MAIN : in std_logic 
 );
 end entity;
@@ -204,7 +204,7 @@ Forwarding_Selectors2 : in std_logic_vector (1 downto 0) ;
 In_Port: in std_logic_vector (31 downto 0) ;
 
 --flags
-flags : inout std_logic_vector (3 downto 0) ; 
+flags : inout std_logic_vector (2 downto 0) ; 
 
 --clk , enable , reset
 clk,
@@ -376,6 +376,34 @@ Rsrc2_Selector : out std_logic_vector(1 downto 0)
 );
 end component Forwarding_Unit_Entity;
 
+-------------------Hazard detection unit-------------------------
+component Hazard_Detection_Unit_Entity is
+    port(
+        --inputs
+        IF_ID_OPCODE,
+        ID_EX_OPCODE,
+        EX_MEM_OPCODE : in std_logic_vector(4 downto 0);    
+
+        IF_ID_Rsrc1,
+        IF_ID_Rsrc2,
+        IF_ID_Rdst : in std_logic_vector(2 downto 0);
+
+        ID_EX_Rsrc1,
+        ID_EX_Rsrc2,
+        ID_EX_Rdst : in std_logic_vector(2 downto 0);
+
+        EX_MEM_Rsrc1,
+        EX_MEM_Rsrc2,
+        EX_MEM_Rdst : in std_logic_vector(2 downto 0);
+    	
+	clk : in std_logic;
+
+        --outputs
+        Stall,
+        IF_ID_Write_Enable :out std_logic
+    );
+end component;
+
 -------------------------------tri state-------------------------------
 
 COMPONENT TriStateEnt is
@@ -468,6 +496,10 @@ signal FS_PC :  std_logic_vector (31 downto 0);
 signal FS_PUSH_PC : std_logic ;
 ------------------------------------------------------------
 
+-------------------Hazard detection unit----------------------
+Signal Hazard_Detection_Stall,
+       Hazard_Detection_IF_ID_WR_EN : std_logic;
+
 ---------------------Execute Stage----------------------------
 --Execute Stage output
 SIGNAL EXMEM_ALU_RESULT : std_logic_vector(31 DOWNTO 0);
@@ -489,6 +521,7 @@ SIGNAL Forwarding_Selectors2  : std_logic_vector(1 DOWNTO 0);
 
 --In Port Data
 SIGNAL In_Port: std_logic_vector (31 downto 0) ;
+--In Port Data
 
 
 --Enable
@@ -582,8 +615,9 @@ FETCH_STAGE_INSTANCE : fetch_stage port map(
     func =>'0',
     branch => '0',
     branch_prediction => '0',
-    stalling            => '0',
+    stalling              => '0',
     interrupt => INTERRUPT_MAIN,
+    finish_interrupt => '0',
     hold_to_complete_out => STALL_TO_FECTH_COMPELETE, ---should be handled to wait for another fetch  
     out_IR =>FS_IR ,
     out_PC => FS_PC,
@@ -593,12 +627,12 @@ FETCH_STAGE_INSTANCE : fetch_stage port map(
 FETCH_BUFFER_INSTANCE : fetch_buffer port map (
     clk  => CLK ,
 	reset_global  => GLOBAL_RESET ,
-    enable_global  => '1',
-    IR_enable  => GLOBAL_ENABLE,
+    enable_global  =>  Hazard_Detection_IF_ID_WR_EN,
+    IR_enable  =>  Hazard_Detection_IF_ID_WR_EN,
     IR_reset  => GLOBAL_RESET,
     IR_in => FS_IR,
     IR_out	 => IFID_IR,
-    PC_enable =>GLOBAL_ENABLE,
+    PC_enable =>   Hazard_Detection_IF_ID_WR_EN,
     PC_reset =>GLOBAL_RESET,
     PC_in => FS_PC,
     PC_out	 => IFID_PC  ,
@@ -666,7 +700,7 @@ DECODE_STAGE_INSTANCE : decode_stage port map (
 ID_EX_INSTANCE : ID_EX port map (
     -- INPUTS 
     ENABLE              => GLOBAL_ENABLE, 
-    RESET               => GLOBAL_RESET, 
+    RESET               => Hazard_Detection_Stall, 
     CLK                 => CLK,
     STALL_SIG           => STALL_TO_FECTH_COMPELETE,
 
@@ -719,7 +753,30 @@ ID_EX_INSTANCE : ID_EX port map (
 
 ------------------------------------------------------------------
 
+------------------------Hazard detection---------------------------
+HAZ_DET: Hazard_Detection_Unit_Entity port map(
+        --inputs
+        IF_ID_OPCODE => IFID_IR(31 downto 27),
+        ID_EX_OPCODE=>  IDEX_IR_OPCODE_OUT,
+        EX_MEM_OPCODE =>  EXMEM_OPCODE_OUT,
 
+        IF_ID_Rsrc1=> IFID_IR(26 downto 24),
+        IF_ID_Rsrc2=> IFID_IR(23 downto 21),
+        IF_ID_Rdst => IFID_IR(20 downto 18),
+
+        ID_EX_Rsrc1=> IDEX_Rsrc1_address_OUT,
+        ID_EX_Rsrc2=> IDEX_Rsrc2_address_OUT,
+        ID_EX_Rdst => IDEX_Rdst_address_OUT,
+
+        EX_MEM_Rsrc1=> EXMEM_Rsrc1_address_OUT,
+        EX_MEM_Rsrc2=> EXMEM_Rsrc2_address_OUT,
+        EX_MEM_Rdst => EXMEM_Rdst_address_OUT,
+        clk => CLK,
+    
+        --outputs
+        Stall=> Hazard_Detection_Stall,
+        IF_ID_Write_Enable => Hazard_Detection_IF_ID_WR_EN
+    );
 
 ----------------------- Execute Stage ------------------------------
 ExecuteStage : Execute_Stage_Entity PORT MAP (
@@ -746,7 +803,7 @@ ExecuteStage : Execute_Stage_Entity PORT MAP (
                                     EXMEM_Rsrc2_address  ,
                                     EX_MEM_OPCODE,
                                     --forwarded data
-                                    EXMEM_Rdst_OUT ,
+                                    EXMEM_ALU_RESULT_OUT ,
                                     Mux10OutWB ,
 
                                     --forwarding unit selectors
@@ -763,7 +820,7 @@ ExecuteStage : Execute_Stage_Entity PORT MAP (
                                     CLK,
 
                                     --Enable
-                                    Execute_EN,
+                                    '1',
 
                                     --Reset
                                     GLOBAL_RESET

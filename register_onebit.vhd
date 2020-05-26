@@ -15,7 +15,7 @@ architecture regonebitarc of regonebit is
 begin
 process (clk,reset,enable)
 begin
-if (reset = '1') then q <= (OTHERS => '0');
+if (reset = '1') then q <= ('0');
 elsif (falling_edge(clk)) and enable = '1' then q <= d;
 end if;
 end process;

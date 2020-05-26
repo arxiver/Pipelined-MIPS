@@ -15,7 +15,7 @@ port(
     PC_in : in std_logic_vector(31 downto 0);
     PC_out	: out std_logic_vector(31 downto 0);
     PUSH_PC_IN : in std_logic ;
-    PUSH_PC_OUT : in std_logic 
+    PUSH_PC_OUT : out std_logic 
 );
 end entity;
 architecture fetch_buffer_arch of fetch_buffer is
