@@ -94,7 +94,7 @@ if(rising_edge(Clk))then
             elsif branch = '1' then
                 PC <=  "0000000000000000" & read_data_1;
             elsif branch_prediction ='1'  then
-                PC <= predicted_branch_address;
+                PC <=  "0000000000000000" & predicted_branch_address;
             elsif stalling = '1' then
                 PC <= PC;
             else 
