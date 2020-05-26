@@ -1,12 +1,2 @@
-MemoryStage
-1) I made the Int = 0  and call = 0 till we reach to int and call
-2) I thin i don't need enable signal (You can leave it and send '1' in the port map always)
-3) 
-
-Buffer 
-1) I think i don't need enable signal (You can leave it and send '1' in the port map always)
-
-
-WB
-
-
+1) The ram is 4000 and the sp start with 4000 and it's just now, the length must be modefied 
+2) We don't use (not int) in the mux6, we will use (int)

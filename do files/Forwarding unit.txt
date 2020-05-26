@@ -1,0 +1,88 @@
+#First we will try Read After Write 
+#ANY THING		MEM WB
+#INC R1			EX MEM	
+#INC R1			ALU
+
+# Rsrc1_Selector should be 1
+# Rsrc2_Selector should be 0
+
+force -freeze sim:/forwarding_unit_entity/ALU_OPCODE 5'h2 0
+force -freeze sim:/forwarding_unit_entity/ALU_Rsrc1_Address 32'h1 0
+force -freeze sim:/forwarding_unit_entity/ALU_Rsrc2_Address 32'h2 0
+force -freeze sim:/forwarding_unit_entity/EX_MEM_OPCODE 5'h2 0
+force -freeze sim:/forwarding_unit_entity/EX_MEM_Rdst_Address 32'h00000001 0
+force -freeze sim:/forwarding_unit_entity/MEM_WB_OPCODE 5'h2 0
+force -freeze sim:/forwarding_unit_entity/MEM_WB_Rdst_Address 32'h1 0
+force -freeze sim:/forwarding_unit_entity/WB_OPCODE_WR_MEM_OP 2'h1 0
+run
+
+#INC R3  	MEM WB
+#INC R2		EX MEM
+#INC R1		ALU
+# Rsrc1_Selector should be 0
+# Rsrc2_Selector should be 0
+force -freeze sim:/forwarding_unit_entity/MEM_WB_Rdst_Address 32'h00000003 0
+force -freeze sim:/forwarding_unit_entity/EX_MEM_Rdst_Address 32'h00000002 0
+force -freeze sim:/forwarding_unit_entity/ALU_Rsrc2_Address 32'h00000000 0
+run
+
+
+
+#ADD R1,R2,R3 		MEM WB
+#INC R3			EX MEM
+#INC R3			ALU
+# Rsrc1_Selector should be 1
+# Rsrc2_Selector should be 0
+force -freeze sim:/forwarding_unit_entity/ALU_OPCODE 5'b01001 0
+force -freeze sim:/forwarding_unit_entity/ALU_OPCODE 5'h02 0
+noforce sim:/forwarding_unit_entity/MEM_WB_OPCODE
+force -freeze sim:/forwarding_unit_entity/MEM_WB_OPCODE 5'b01001 0
+force -freeze sim:/forwarding_unit_entity/ALU_Rsrc1_Address 32'h00000003 0
+force -freeze sim:/forwarding_unit_entity/ALU_Rsrc2_Address 32'h00000001 0
+force -freeze sim:/forwarding_unit_entity/EX_MEM_Rdst_Address 32'h00000003 0
+force -freeze sim:/forwarding_unit_entity/MEM_WB_Rdst_Address 32'h00000003 0
+run
+
+
+
+#shl R1 , 5 		MEM WB
+#INC R2			EX MEM
+#ADD R1 , R3 , R4	ALU
+# Rsrc1_Selector should be 2
+# Rsrc2_Selector should be 0
+force -freeze sim:/forwarding_unit_entity/ALU_OPCODE 5'b01110 0
+force -freeze sim:/forwarding_unit_entity/MEM_WB_OPCODE 5'b01110 0
+force -freeze sim:/forwarding_unit_entity/MEM_WB_Rdst_Address 32'h00000001 0
+force -freeze sim:/forwarding_unit_entity/ALU_OPCODE 5'b01001 0
+force -freeze sim:/forwarding_unit_entity/ALU_Rsrc1_Address 32'h00000001 0
+force -freeze sim:/forwarding_unit_entity/ALU_Rsrc2_Address 32'h00000003 0
+run
+
+#shl R1 , 5 		MEM WB
+#INC R3			EX MEM
+#ADD R1 , R3 , R4	ALU
+# Rsrc1_Selector should be 2
+# Rsrc2_Selector should be 1
+force -freeze sim:/forwarding_unit_entity/EX_MEM_Rdst_Address 32'h00000003 0
+run
+
+#shl R3 , 5 		MEM WB
+#INC R1			EX MEM
+#ADD R1 , R3 , R4	ALU
+# Rsrc1_Selector should be 1
+# Rsrc2_Selector should be 2
+force -freeze sim:/forwarding_unit_entity/MEM_WB_Rdst_Address 32'h00000003 0
+force -freeze sim:/forwarding_unit_entity/EX_MEM_Rdst_Address 32'h00000001 0
+run
+
+
+#POP R3 		MEM WB
+#NOP			EX MEM
+#ADD R1 , R3 , R4	ALU
+# Rsrc1_Selector should be 0
+# Rsrc2_Selector should be 2
+force -freeze sim:/forwarding_unit_entity/MEM_WB_OPCODE 5'b10001 0
+force -freeze sim:/forwarding_unit_entity/EX_MEM_OPCODE 5'h00 0
+force -freeze sim:/forwarding_unit_entity/ALU_OPCODE 5'b01001 0
+run
+

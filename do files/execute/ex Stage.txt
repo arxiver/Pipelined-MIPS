@@ -51,7 +51,7 @@ force -freeze sim:/execute_stage_entity/Enable 1 0
 force -freeze sim:/execute_stage_entity/Reset 0 0
 
 #mux1 inputs
-force -freeze sim:/execute_stage_entity/IDEX_Rsrc1 32'h4 0
+force -freeze sim:/execute_stage_entity/IDEX_Rsrc1 32'hFFFFFFFF 0
 force -freeze sim:/execute_stage_entity/WB_Forwarding 32'h8 0
 force -freeze sim:/execute_stage_entity/Mem_Forwarding 32'h3 0
 #selector

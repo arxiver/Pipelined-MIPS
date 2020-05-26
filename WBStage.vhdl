@@ -76,7 +76,7 @@ BEGIN
             IncOrDec <= ControlSignals(17);
             MemToReg <= ControlSignals(8);
 
-            SMux9 <= (NOT Int) OR IncOrDec;
+            SMux9 <= Int OR IncOrDec;
             SPDecrement <= SP-1;
 
             -- Outputs

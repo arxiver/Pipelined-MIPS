@@ -7,7 +7,8 @@ GLOBAL_RESET : in std_logic;
 GLOBAL_INITAIL : in std_logic;
 CLK : in std_logic ;
 OUTPORT : out std_logic_vector(31 DOWNTO 0);
- FLAGS: inout std_logic_vector (2 downto 0)  := (OTHERS => '0') 
+FLAGS : inout std_logic_vector(2 DOWNTO 0);
+INTERRUPT_MAIN : in std_logic 
 );
 end entity;
 
@@ -87,7 +88,9 @@ port(
     PC_enable :in std_logic;
     PC_reset : in std_logic;
     PC_in : in std_logic_vector(31 downto 0);
-    PC_out	: out std_logic_vector(31 downto 0)    
+    PC_out	: out std_logic_vector(31 downto 0);
+    PUSH_PC_IN : in std_logic ;
+    PUSH_PC_OUT : out std_logic 
 );
 end component;
 
@@ -98,9 +101,12 @@ component fetch_stage is
             Clk ,reset : in std_logic;
             correct_branch_address,address2,mux8_output,read_data_1,predicted_branch_address : in std_logic_vector(15 downto 0);
             miss_prediction,int_fsm,func,branch,branch_prediction,stalling : in std_logic;                    
+            interrupt : in std_logic ;      
+            finish_interrupt : in std_logic ; 
             hold_to_complete_out :out std_logic;
             out_IR :out  std_logic_vector(31 downto 0);    
-            out_PC :out  std_logic_vector(31 downto 0)    
+            out_PC :out  std_logic_vector(31 downto 0);
+            PUSH_PC : out std_logic 
         );
 end component;
 
@@ -487,6 +493,7 @@ signal IFID_IR :  std_logic_vector (31 downto 0);
 signal IFID_PC :  std_logic_vector (31 downto 0);
 signal FS_IR :  std_logic_vector (31 downto 0);
 signal FS_PC :  std_logic_vector (31 downto 0);
+signal FS_PUSH_PC : std_logic ;
 ------------------------------------------------------------
 
 -------------------Hazard detection unit----------------------
@@ -608,10 +615,13 @@ FETCH_STAGE_INSTANCE : fetch_stage port map(
     func =>'0',
     branch => '0',
     branch_prediction => '0',
-    stalling            => Hazard_Detection_Stall,
+    stalling              => '0',
+    interrupt => INTERRUPT_MAIN,
+    finish_interrupt => '0',
     hold_to_complete_out => STALL_TO_FECTH_COMPELETE, ---should be handled to wait for another fetch  
     out_IR =>FS_IR ,
-    out_PC => FS_PC
+    out_PC => FS_PC,
+    PUSH_PC => FS_PUSH_PC
 );
 --FIRST BUFFER: IF/ID BUFFER 
 FETCH_BUFFER_INSTANCE : fetch_buffer port map (
@@ -625,7 +635,9 @@ FETCH_BUFFER_INSTANCE : fetch_buffer port map (
     PC_enable =>   Hazard_Detection_IF_ID_WR_EN,
     PC_reset =>GLOBAL_RESET,
     PC_in => FS_PC,
-    PC_out	 => IFID_PC
+    PC_out	 => IFID_PC  ,
+    PUSH_PC_IN => FS_PUSH_PC ,
+    PUSH_PC_OUT => open
 );
 ------------------------------------------------------------------
 CONTROL_UNIT_INSTANCE : control_unit port map (

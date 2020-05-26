@@ -7,7 +7,7 @@ entity ALU_PORTB_ENTITY is
 port(
 Data1,Data2: in std_logic_vector (31 downto 0) ; 
 S: in std_logic_vector(2 downto 0);
-Flags : inout std_logic_vector (3 downto 0) := (OTHERS => '0'); 
+Flags : inout std_logic_vector (2 downto 0) := (OTHERS => '0'); 
 F : out std_logic_vector(31 downto 0));
 end entity ALU_PORTB_ENTITY;
 
@@ -27,8 +27,8 @@ begin
     F <= Fbuffer;
 
     
-    Flags(2) <= Data1(1) when  S="010"  --INC
-    else Data1(1) when S = "011" --DEC 
+    Flags(2) <= Data1(1) when  S="010"  --shift left
+    else Data1(1) when S = "011" --shift right 
     else Flags(2) ;
       
 
@@ -43,6 +43,5 @@ begin
     else Flags(0)  ; 
 	
 
-    --don`t forget to update flags
 
 end architecture ALU_PORTB_ARCH;

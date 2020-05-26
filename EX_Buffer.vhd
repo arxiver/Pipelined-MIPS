@@ -13,6 +13,7 @@ EXMEM_Rsrc2_IN :in  std_logic_vector (31 downto 0);
 EXMEM_Rdst_address_IN :in  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address_IN :in  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address_IN :in  std_logic_vector (2 downto 0); 
+EXMEM_OP_CODE_IN  :in  std_logic_vector (4 downto 0); 
 
 EXMEM_ALU_RESULT_OUT:out  std_logic_vector (31 downto 0);
 EXMEM_CONTROL_SIGNALS_OUT :out std_logic_vector (26 downto 0);
@@ -22,6 +23,7 @@ EXMEM_Rsrc2_OUT :out  std_logic_vector (31 downto 0);
 EXMEM_Rdst_address_OUT :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc1_address_OUT :out  std_logic_vector (2 downto 0);
 EXMEM_Rsrc2_address_OUT :out  std_logic_vector (2 downto 0); 
+EXMEM_OP_CODE_OUT  :out  std_logic_vector (4 downto 0); 
 
 Wr,clk,reset : in std_logic);
 end entity EX_Buffer_Entity;
@@ -47,5 +49,6 @@ EXMEM_Rsrc2_Label  		    	: reg generic map (n   => 32) port map (clk , reset , 
 EXMEM_Rdst_address_Label  		: reg generic map (n   => 3)  port map (clk , reset , Wr ,EXMEM_Rdst_address_IN ,EXMEM_Rdst_address_OUT );
 EXMEM_Rsrc1_address_Label   	: reg generic map (n   => 3)  port map (clk , reset , Wr ,EXMEM_Rsrc1_address_IN , EXMEM_Rsrc1_address_OUT );
 EXMEM_Rsrc2_address_Label   	: reg generic map (n   => 3)  port map (clk , reset , Wr ,EXMEM_Rsrc2_address_IN , EXMEM_Rsrc2_address_OUT );
+EXMEM_OP_CODE_Label   	        : reg generic map (n   => 5)  port map (clk , reset , Wr ,EXMEM_OP_CODE_IN , EXMEM_OP_CODE_OUT );
 
 end architecture EX_Buffer_Arch;

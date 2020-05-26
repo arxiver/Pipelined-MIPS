@@ -31,6 +31,9 @@ ENTITY MemoryEnt IS
             -- Data
             DataRead2: IN std_logic_vector(n-1 DOWNTO 0);
 
+	    -- Data
+  	   OPCODE:IN std_logic_vector(4 DOWNTO 0);
+
             -- Outputs
             RDesDataOut  : OUT std_logic_vector(31 DOWNTO 0);
             RSrc2DataOut : OUT std_logic_vector(31 DOWNTO 0);
@@ -42,7 +45,8 @@ ENTITY MemoryEnt IS
             MemOut: OUT std_logic_vector(n-1 DOWNTO 0);
             SPOut: OUT std_logic_vector(n-1 DOWNTO 0);
             ALUResultOut: OUT std_logic_vector(n-1 DOWNTO 0);
-            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0)
+            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0);
+            OPCODEOut:Out std_logic_vector(4 DOWNTO 0)
 
         );
 END ENTITY;
@@ -101,7 +105,7 @@ BEGIN
             MemR <= ControlSignals(14);
 
             -- MUXES SELECTORS
-            SMux6 <= (NOT Int) OR IncrementOrDecrement;
+            SMux6 <= Int OR IncrementOrDecrement;
             SMux7 <= SPSignal OR Int;
 
             -- MUXES DATA
@@ -123,6 +127,7 @@ BEGIN
             SPOut <= OutMux6;
             ALUResultOut <= ALUResult;
             ControlSignalsOut <= ControlSignals;
+	    OPCODEOut <= OPCODE;
         -- END IF;
     -- END PROCESS;
     
