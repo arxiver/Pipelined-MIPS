@@ -593,9 +593,16 @@ signal DS_Rsrc2_address : std_logic_vector (2 DOWNTO 0);
 SIGNAL SPSofyan : std_logic_vector(31 DOWNTO 0) := "00000000000000000000111110100000";
 
 --------------------------------
-Signal BranchFetch : std_logic;
+Signal BranchFetch , IS_RET : std_logic;
 begin
-BranchFetch <= CU_JMP or (CU_JZ and Flags(0)) or  CU_FUNC;
+BranchFetch <= '1'
+when  CU_JMP = '1' or (CU_JZ = '1' and Flags(0) = '1') or  (CU_FUNC = '1') 
+	      or (IFID_IR(31 downto 27) = "11011") or (IDEX_IR_OPCODE_OUT = "11011")
+	      or (EXMEM_OPCODE_OUT = "11011") 
+else '0';
+IS_RET <= '1' 
+when MEMWB_OPCODE_OUT = "11011"
+else '0';
 -- first stage : FETCH STAGE
 FETCH_STAGE_INSTANCE : fetch_stage port map(
     initial => GLOBAL_INITAIL,
@@ -603,12 +610,12 @@ FETCH_STAGE_INSTANCE : fetch_stage port map(
     reset => GLOBAL_RESET,    
     correct_branch_address => ZERO_LOGIC_16,
     address2 => ZERO_LOGIC_16,
-    mux8_output => ZERO_LOGIC_16,
+    mux8_output => Mux10OutWB(15 downto 0),
     read_data_1 =>DS_RD_DATA_1_OUT(15 downto 0),
     predicted_branch_address => ZERO_LOGIC_16,
     miss_prediction => '0',
     int_fsm => '0',
-    func =>'0',
+    func =>IS_RET,
     branch => BranchFetch,
     branch_prediction => '0',
     stalling            => Hazard_Detection_Stall,

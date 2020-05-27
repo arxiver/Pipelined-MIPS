@@ -92,7 +92,7 @@ BEGIN
     -- MUXES
     Mux6 : Mux21Ent port map(SMux6,SP,SPIncrement,OutMux6);
     Mux7 : Mux21Ent port map(SMux7,ALUResult,OutMux6,OutMux7);
-    Mux8 : Mux41Ent port map(Call,Int,DataRead2,PC,PCIncrement,(others => '0'),OutMux8);
+    Mux8 : Mux41Ent port map(Call,Int,DataRead2,PC,PCIncrement,(others => '0'),OutMux8); 
 
     -- RAM
     Ram1 : RamEnt port map(Clk,MemWSignal,MemR,OutMux7,OutMux8,MemOut);

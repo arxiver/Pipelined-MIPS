@@ -49,10 +49,11 @@ full_reset <= initial or reset;
 ram : ins_ram port map(initial,Clk,'0','1',PC,(others => '0'),bit_IR_16);  
 hold_to_complete_out <=hold_to_complete;
 out_IR <= IR;
-out_PC <= PC;
+
 
 process(Clk,reset,stalling)
 begin
+out_PC <= PC;
 if(rising_edge(reset))then 
 PC<=(OTHERS => '0' );
 is_reset<='1';
@@ -72,7 +73,7 @@ if hold_to_complete = '0' then
     elsif int_fsm = '1' then
         PC <= address2;
     elsif func = '1' then
-        PC <= mux8_output;
+        PC <= "0000000000000000"&mux8_output;
     elsif branch = '1' then
         PC <= "0000000000000000"&read_data_1;
 	IR <= "00000000000000000000000000000000";
@@ -93,6 +94,13 @@ if hold_to_complete = '0' then
  elsif falling_edge(stalling) then
 	--PC <= PC + 1; 
 	hold_to_complete <= '1';
+elsif branch = '1' then
+        PC <= "0000000000000000"&read_data_1;
+	IR <= "00000000000000000000000000000000";
+	hold_to_complete <= '0';
+elsif func = '1' then
+        PC <= "0000000000000000"&mux8_output;
+	hold_to_complete <= '0';
   else
     PC <= PC+1;    
 end if;
