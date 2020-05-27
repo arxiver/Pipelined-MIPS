@@ -18,8 +18,8 @@ END ENTITY;
 ARCHITECTURE Mux41Arch OF Mux41Ent IS BEGIN
 
     F <= IN0  when s1 = '0' and s0 = '0'
-    ELSE IN1  when s1 = '0' and s0 = '1'
-    ELSE IN2  when s1 = '1' and s0 = '0'
+    ELSE IN2  when s1 = '0' and s0 = '1'
+    ELSE IN1  when s1 = '1' and s0 = '0'
     ELSE IN3  WHEN s1 = '1' and s0 = '1';
 
 END ARCHITECTURE;

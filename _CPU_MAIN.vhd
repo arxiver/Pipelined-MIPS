@@ -592,7 +592,10 @@ signal DS_Rsrc2_address : std_logic_vector (2 DOWNTO 0);
 -- SIGNAL SPSofyan : std_logic_vector(31 DOWNTO 0);
 SIGNAL SPSofyan : std_logic_vector(31 DOWNTO 0) := "00000000000000000000111110100000";
 
+--------------------------------
+Signal BranchFetch : std_logic;
 begin
+BranchFetch <= CU_JMP or (CU_JZ and Flags(0)) or  CU_FUNC;
 -- first stage : FETCH STAGE
 FETCH_STAGE_INSTANCE : fetch_stage port map(
     initial => GLOBAL_INITAIL,
@@ -601,12 +604,12 @@ FETCH_STAGE_INSTANCE : fetch_stage port map(
     correct_branch_address => ZERO_LOGIC_16,
     address2 => ZERO_LOGIC_16,
     mux8_output => ZERO_LOGIC_16,
-    read_data_1 =>ZERO_LOGIC_16,
+    read_data_1 =>DS_RD_DATA_1_OUT(15 downto 0),
     predicted_branch_address => ZERO_LOGIC_16,
     miss_prediction => '0',
     int_fsm => '0',
     func =>'0',
-    branch => '0',
+    branch => BranchFetch,
     branch_prediction => '0',
     stalling            => Hazard_Detection_Stall,
     hold_to_complete_out => STALL_TO_FECTH_COMPELETE, ---should be handled to wait for another fetch  
@@ -616,7 +619,7 @@ FETCH_STAGE_INSTANCE : fetch_stage port map(
 --FIRST BUFFER: IF/ID BUFFER 
 FETCH_BUFFER_INSTANCE : fetch_buffer port map (
     clk  => CLK ,
-	reset_global  => GLOBAL_RESET ,
+	reset_global  => GLOBAL_RESET,
     enable_global  =>  Hazard_Detection_IF_ID_WR_EN,
     IR_enable  =>  Hazard_Detection_IF_ID_WR_EN,
     IR_reset  => GLOBAL_RESET,
@@ -816,7 +819,7 @@ ExecuteStage : Execute_Stage_Entity PORT MAP (
 );
 -----------------------------------------------------------------------
 
------------------------ Execute Stage ------------------------------
+----------------------- Execute buffer ------------------------------
 EXMEM_LABEL : EX_Buffer_Entity PORT MAP (
                                     --Execute stage outputs
                                     EXMEM_ALU_RESULT ,
@@ -876,7 +879,7 @@ MemoryStage : MemoryEnt PORT MAP(
                                     -- Data from nassar
                                     EXMEM_CONTROL_SIGNALS_OUT,
                                     '0',
-                                    '0',
+                                    EXMEM_CONTROL_SIGNALS_OUT(21),
                                     EXMEM_PC_OUT,
                                     SPSofyan,
                                     EXMEM_ALU_RESULT_OUT,

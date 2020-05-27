@@ -56,7 +56,7 @@ begin
 if(rising_edge(reset))then 
 PC<=(OTHERS => '0' );
 is_reset<='1';
-elsif(rising_edge(Clk),or rising_edge(stalling) or falling_edge(stalling))then
+elsif(rising_edge(Clk)or rising_edge(stalling) or falling_edge(stalling))then
 if(initial = '1') then
 IR <= (OTHERS => '0' );
 PC <= (OTHERS => '0' );
@@ -74,7 +74,8 @@ if hold_to_complete = '0' then
     elsif func = '1' then
         PC <= mux8_output;
     elsif branch = '1' then
-        PC <= read_data_1;
+        PC <= "0000000000000000"&read_data_1;
+	IR <= "00000000000000000000000000000000";
     elsif branch_prediction ='1'  then
         PC <= predicted_branch_address;
     elsif rising_edge(stalling) then
@@ -97,7 +98,7 @@ if hold_to_complete = '0' then
 end if;
 end if;
 else if (falling_edge(clk)) then
-    if(hold_to_complete = '0')then 
+      if(hold_to_complete = '0')then 
         IR <=  bit_IR_16 & "0000000000000000" ;    
         if(is_reset='1')then 
             PC<= "0000000000000000"&bit_IR_16;
