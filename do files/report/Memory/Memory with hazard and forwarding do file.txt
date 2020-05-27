@@ -25,7 +25,12 @@ add wave -position insertpoint  \
 sim:/cpu_main/OUTPORT
 add wave -position insertpoint  \
 sim:/cpu_main/GLOBAL_RESET
-
+add wave -position insertpoint  \
+sim:/cpu_main/Hazard_Detection_IF_ID_WR_EN \
+sim:/cpu_main/Hazard_Detection_Stall
+add wave -position insertpoint sim:/cpu_main/FETCH_STAGE_INSTANCE/*
+add wave -position insertpoint sim:/cpu_main/*
+force -freeze sim:/cpu_main/In_Port 32'h0CDAFE19 0
 run
 run
 run
@@ -38,27 +43,7 @@ run
 run
 run
 run
-force -freeze sim:/cpu_main/In_Port 32'h19 0
-run
-force -freeze sim:/cpu_main/In_Port 32'hFFFD 0
+force -freeze sim:/cpu_main/In_Port 32'hFFFF 0
 run
 force -freeze sim:/cpu_main/In_Port 32'hF320 0
-run
-
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-run
 run

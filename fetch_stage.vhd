@@ -49,9 +49,16 @@ ram : ins_ram port map(initial,Clk,'0','1',PC,(others => '0'),bit_IR_16);
 hold_to_complete_out <=hold_to_complete;
 out_IR <= IR;
 out_PC <= PC;
-process(Clk)
+
+--process(stalling)
+--begin
+--if(rising_edge(stalling))then
+--PC <= PC -1;
+--end if;
+--end process;
+process(Clk,stalling)
 begin
-if(rising_edge(Clk))then
+if(rising_edge(Clk) or rising_edge(stalling) or falling_edge(stalling))then
 if(initial = '1') then
 IR <= (OTHERS => '0' );
 PC <= (OTHERS => '0' );
@@ -71,12 +78,22 @@ if hold_to_complete = '0' then
         PC <= read_data_1;
     elsif branch_prediction ='1'  then
         PC <= predicted_branch_address;
+    elsif rising_edge(stalling) then
+	PC <= PC - 1;
+    elsif falling_edge(stalling) then
+	PC <= PC + 1;
     elsif stalling = '1' then
         PC <= PC;
     else 
         PC <= PC +1;
     end if;    
-else 
+ elsif rising_edge(stalling) then
+	PC <= PC - 1;
+	hold_to_complete <= '0';
+ elsif falling_edge(stalling) then
+	--PC <= PC + 1; 
+	hold_to_complete <= '1';
+  else
     PC <= PC+1;    
 end if;
 end if;
