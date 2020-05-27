@@ -42,6 +42,7 @@ end component;
    signal PC_reset : std_logic;
    signal full_reset : std_logic;
    signal hold_to_complete : std_logic; 
+   signal is_reset : std_logic;
 
 begin
 full_reset <= initial or reset;
@@ -50,18 +51,16 @@ hold_to_complete_out <=hold_to_complete;
 out_IR <= IR;
 out_PC <= PC;
 
---process(stalling)
---begin
---if(rising_edge(stalling))then
---PC <= PC -1;
---end if;
---end process;
-process(Clk,stalling)
+process(Clk,reset,stalling)
 begin
-if(rising_edge(Clk) or rising_edge(stalling) or falling_edge(stalling))then
+if(rising_edge(reset))then 
+PC<=(OTHERS => '0' );
+is_reset<='1';
+elsif(rising_edge(Clk),or rising_edge(stalling) or falling_edge(stalling))then
 if(initial = '1') then
 IR <= (OTHERS => '0' );
 PC <= (OTHERS => '0' );
+is_reset<='0';
 IR_enable <= '1';
 IR_reset <= '0';
 PC_enable <= '1';
@@ -100,6 +99,10 @@ end if;
 else if (falling_edge(clk)) then
     if(hold_to_complete = '0')then 
         IR <=  bit_IR_16 & "0000000000000000" ;    
+        if(is_reset='1')then 
+            PC<= "0000000000000000"&bit_IR_16;
+            is_reset<='0';
+        end if;
         prev_IR_16_bit <= bit_IR_16;
          if ((bit_IR_16(15 downto 11) = "10010")  	--LDM
 					OR (bit_IR_16(15 downto 11) = "10011") --LDD
