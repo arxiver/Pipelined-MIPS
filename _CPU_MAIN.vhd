@@ -201,7 +201,8 @@ Forwarding_Selectors2 : in std_logic_vector (1 downto 0) ;
 In_Port: in std_logic_vector (31 downto 0) ;
 
 --flags
-flags : inout std_logic_vector (2 downto 0) ; 
+FlagsIn : in std_logic_vector (2 downto 0)  ; 
+FlagsOut : out std_logic_vector (2 downto 0)  ; 
 
 --clk , enable , reset
 clk,
@@ -410,6 +411,15 @@ COMPONENT TriStateEnt is
     F : OUT std_logic_vector(31 downto 0)
 );
 END COMPONENT;
+ component reg is 
+    generic (n:integer := 16);
+    port(	clk : in std_logic ; 
+        reset : in std_logic ; 
+        enable : in std_logic ; 
+        d	: in std_logic_vector(n-1 downto 0);
+        q	: out std_logic_vector(n-1 downto 0)
+    );
+    end component;   
 
 COMPONENT TriStateSPEnt is
     Port(
@@ -419,6 +429,14 @@ COMPONENT TriStateSPEnt is
 );
 END COMPONENT;
 
+COMPONENT Mux21Ent IS
+generic (n:integer := 16);
+PORT ( 
+        s0: IN STD_LOGIC ;
+        IN0,IN1 : IN std_logic_vector(n-1 DOWNTO 0);
+        F : OUT std_logic_vector(n-1 DOWNTO 0)
+    );
+END COMPONENT;
 -----------------------------------------------------------------------
 signal MAIN_INTERRUPT : std_logic := '0';
 --------------------   SIGNALS   ------------------------
@@ -596,7 +614,11 @@ signal DS_Rsrc2_address : std_logic_vector (2 DOWNTO 0);
 SIGNAL SPSofyan : std_logic_vector(31 DOWNTO 0) := "00000000000000000000111110100000";
 
 --------------------------------
-Signal BranchFetch , IS_RET : std_logic;
+Signal BranchFetch , IS_RET,IS_RTI : std_logic;
+
+Signal FlagsWrEnable  : std_logic;
+Signal  FlagsInput ,FlagsOutput,ExecuteStageFlags : std_logic_vector(2 downto 0);
+
 begin
 BranchFetch <= '1'
 when  CU_JMP = '1' or (CU_JZ = '1' and Flags(0) = '1') or  (CU_FUNC = '1') 
@@ -606,6 +628,18 @@ else '0';
 IS_RET <= '1' 
 when MEMWB_OPCODE_OUT = "11011" or MEMWB_OPCODE_OUT ="11100"
 else '0';
+
+IS_RTI <= '1' 
+when  MEMSTAGE_OPCODE_OUT ="11100"
+else '0';
+
+---------------------Flags---------------------------------
+-------------------------------------------------------------
+flagsInputLabel :  Mux21Ent generic map (n => 3)  port map(IS_RTI,ExecuteStageFlags,MemOutMemory(31 downto 29),FlagsInput);
+flagsLabel :reg generic map(n => 3)       
+        port map(clk,GLOBAL_RESET,'1',FlagsInput,flags);
+--------------------------------------------------------------
+
 -- first stage : FETCH STAGE
 FETCH_STAGE_INSTANCE : fetch_stage port map(
     initial => GLOBAL_INITAIL,
@@ -818,7 +852,8 @@ ExecuteStage : Execute_Stage_Entity PORT MAP (
                                     In_Port ,
                                     
                                     --flags
-                                    FLAGS,
+				    flags,
+                                    ExecuteStageFlags,
 
                                     --CLK
                                     CLK,

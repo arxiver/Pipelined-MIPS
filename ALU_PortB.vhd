@@ -7,7 +7,8 @@ entity ALU_PORTB_ENTITY is
 port(
 Data1,Data2: in std_logic_vector (31 downto 0) ; 
 S: in std_logic_vector(2 downto 0);
-Flags : inout std_logic_vector (2 downto 0) := (OTHERS => '0'); 
+FlagsIn : in std_logic_vector (2 downto 0) ; 
+FlagsOut : out std_logic_vector (2 downto 0) ; 
 F : out std_logic_vector(31 downto 0));
 end entity ALU_PORTB_ENTITY;
 
@@ -27,20 +28,20 @@ begin
     F <= Fbuffer;
 
     
-    Flags(2) <= Data1(1) when  S="010"  --shift left
+    FlagsOut(2) <= Data1(1) when  S="010"  --shift left
     else Data1(1) when S = "011" --shift right 
-    else Flags(2) ;
+    else FlagsIn(2) ;
       
 
    
     --Negative flag
-    Flags(1) <= Fbuffer(31) when S = "010"  or S = "011"
-    else Flags(1);
+    FlagsOut(1) <= Fbuffer(31) when S = "010"  or S = "011"
+    else FlagsIn(1);
 
     --zero flag
-    Flags(0) <= '1' When  Fbuffer="00000000000000000000000000000000" and (S = "010" or S = "011")
+    FlagsOut(0) <= '1' When  Fbuffer="00000000000000000000000000000000" and (S = "010" or S = "011")
     else '0' when Fbuffer /="00000000000000000000000000000000" and (S = "010" or S = "011")
-    else Flags(0)  ; 
+    else FlagsIn(0)  ; 
 	
 
 

@@ -1,4 +1,5 @@
 vsim -gui work.cpu_main
+add wave -position insertpoint sim:/cpu_main/ExecuteStage/ALU_Label/*
 add wave -position insertpoint  \
 sim:/cpu_main/CLK
 add wave -position insertpoint  \

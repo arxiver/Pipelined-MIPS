@@ -7,7 +7,8 @@ entity ALU_PortA_Entity is
 port(
 Data1,Data2: in std_logic_vector (31 downto 0) ; 
 S: in std_logic_vector(2 downto 0);
-Flags:inout std_logic_vector(2 downto 0):= (OTHERS => '0') ;
+FlagsIn:in std_logic_vector(2 downto 0);
+FlagsOut:out std_logic_vector(2 downto 0) ;
 F : out std_logic_vector(31 downto 0));
 
 end entity ALU_PortA_Entity;
@@ -61,20 +62,20 @@ Cout_DEC <= '1' when S = "010" and Data1 = "00000000000000000000000000000000"
 	else '0';
 
    --carry flag
-    Flags(2) <= Cout_INC when  S="001"  --INC
+    FlagsOut(2) <= Cout_INC when  S="001"  --INC
     else Cout_DEC when S = "010"  --DEC 
     else Cout_ADD when S = "011"    --ADD
     else Cout_SUB when S = "100"  --SUB
-    else Flags(2) ;
+    else FlagsIn(2) ;
       
 
    
     --Negative flag
-    Flags(1) <= F_Buffer(31) when S /= "111" 
-    else Flags(1);
+    FlagsOut(1) <= F_Buffer(31) when S /= "111" 
+    else FlagsIn(1);
 
     --zero flag
-    Flags(0) <= '1' When  F_Buffer="00000000000000000000000000000000" and S /= "111"
+    FlagsOut(0) <= '1' When  F_Buffer="00000000000000000000000000000000" and S /= "111"
     else '0' ; --jz
 	
   
