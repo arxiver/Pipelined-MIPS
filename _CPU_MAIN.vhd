@@ -604,7 +604,7 @@ when  CU_JMP = '1' or (CU_JZ = '1' and Flags(0) = '1') or  (CU_FUNC = '1')
 	      or (EXMEM_OPCODE_OUT = "11011") 
 else '0';
 IS_RET <= '1' 
-when MEMWB_OPCODE_OUT = "11011"
+when MEMWB_OPCODE_OUT = "11011" or MEMWB_OPCODE_OUT ="11100"
 else '0';
 -- first stage : FETCH STAGE
 FETCH_STAGE_INSTANCE : fetch_stage port map(
