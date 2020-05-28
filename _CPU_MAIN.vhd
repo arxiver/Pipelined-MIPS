@@ -622,8 +622,9 @@ Signal  FlagsInput ,FlagsOutput,ExecuteStageFlags : std_logic_vector(2 downto 0)
 begin
 BranchFetch <= '1'
 when  CU_JMP = '1' or (CU_JZ = '1' and Flags(0) = '1') or  (CU_FUNC = '1') 
-	      or (IFID_IR(31 downto 27) = "11011") or (IDEX_IR_OPCODE_OUT = "11011")
-	      or (EXMEM_OPCODE_OUT = "11011") 
+	      or (IFID_IR(31 downto 27) = "11011")   or (IFID_IR(31 downto 27) = "11100")
+	      or (IDEX_IR_OPCODE_OUT = "11011")   or (IDEX_IR_OPCODE_OUT = "11100")
+	      or (EXMEM_OPCODE_OUT = "11011")  	      or (EXMEM_OPCODE_OUT = "11100") 
 else '0';
 IS_RET <= '1' 
 when MEMWB_OPCODE_OUT = "11011" or MEMWB_OPCODE_OUT ="11100"

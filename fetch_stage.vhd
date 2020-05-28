@@ -110,6 +110,7 @@ end if;
 else if (falling_edge(clk)) then
       if(is_interrupt='1')then 
             PC<= "0000000000000000"&bit_IR_16;
+--	    PC<= PC - 1;
             is_interrupt<='0';
       elsif(hold_to_complete = '0')then 
         IR <=  bit_IR_16 & "0000000000000000" ;    
