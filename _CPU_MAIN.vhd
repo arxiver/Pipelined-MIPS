@@ -4,7 +4,7 @@ entity CPU_MAIN is
 port (
 GLOBAL_ENABLE : in std_logic;
 GLOBAL_RESET : in std_logic;
-GLOBAL_INITAIL : in std_logic;
+GLOBAL_INITAIL : in std_logic := '0' ;
 CLK : in std_logic ;
 OUTPORT : out std_logic_vector(31 DOWNTO 0);
  FLAGS: inout std_logic_vector (2 downto 0)  := (OTHERS => '0') 
@@ -87,7 +87,9 @@ port(
     PC_enable :in std_logic;
     PC_reset : in std_logic;
     PC_in : in std_logic_vector(31 downto 0);
-    PC_out	: out std_logic_vector(31 downto 0)    
+    PC_out	: out std_logic_vector(31 downto 0);
+    INT_in 	: in std_logic ;
+    INT_out : out std_logic   
 );
 end component;
 
@@ -145,8 +147,9 @@ FLUSH_JMP : in std_logic ;
 FLUSH_FUNC : in std_logic ;
 FLUSH_JZ  : in std_logic ;
 IR_OPCODE : in std_logic_vector (4 downto 0);
+INTR 	: in std_logic ; 
 -- OUTPUTS
-OUT_CONTROL_SIGNALS : out std_logic_vector (26 downto 0);
+OUT_CONTROL_SIGNALS : out std_logic_vector (27 downto 0);
 PC_OUT : out std_logic_vector (31 downto 0);
 Rdst_OUT : out std_logic_vector (31 downto 0);
 Rsrc1_OUT : out std_logic_vector (31 downto 0);
@@ -165,7 +168,7 @@ end component;
 component Execute_Stage_Entity is 
 port(
 --ID/EX INPUTS
-IDEX_CONTROL_SIGNALS :in std_logic_vector (26 downto 0);
+IDEX_CONTROL_SIGNALS :in std_logic_vector (27 downto 0);
 IDEX_PC :in  std_logic_vector (31 downto 0);
 IDEX_Rdst :in  std_logic_vector (31 downto 0);
 IDEX_Rsrc1 :in  std_logic_vector (31 downto 0);
@@ -178,7 +181,7 @@ ID_EX_OPCODE : in std_logic_vector (4 downto 0);
 
 --EX/MEM Outputs
 EXMEM_ALU_RESULT:out  std_logic_vector (31 downto 0);
-EXMEM_CONTROL_SIGNALS :out std_logic_vector (26 downto 0);
+EXMEM_CONTROL_SIGNALS :out std_logic_vector (27 downto 0);
 EXMEM_PC :out  std_logic_vector (31 downto 0);
 EXMEM_Rdst :out  std_logic_vector (31 downto 0);
 EXMEM_Rsrc2 :out  std_logic_vector (31 downto 0);
@@ -210,7 +213,7 @@ end component Execute_Stage_Entity;
 component EX_Buffer_Entity is 
 port(
 EXMEM_ALU_RESULT_IN:in  std_logic_vector (31 downto 0);
-EXMEM_CONTROL_SIGNALS_IN :in std_logic_vector (26 downto 0);
+EXMEM_CONTROL_SIGNALS_IN :in std_logic_vector (27 downto 0);
 EXMEM_PC_IN :in  std_logic_vector (31 downto 0);
 EXMEM_Rdst_IN :in  std_logic_vector (31 downto 0);
 EXMEM_Rsrc2_IN :in  std_logic_vector (31 downto 0);
@@ -220,7 +223,7 @@ EXMEM_Rsrc2_address_IN :in  std_logic_vector (2 downto 0);
 EXMEM_OP_CODE_IN  :in  std_logic_vector (4 downto 0); 
 
 EXMEM_ALU_RESULT_OUT:out  std_logic_vector (31 downto 0);
-EXMEM_CONTROL_SIGNALS_OUT :out std_logic_vector (26 downto 0);
+EXMEM_CONTROL_SIGNALS_OUT :out std_logic_vector (27 downto 0);
 EXMEM_PC_OUT :out  std_logic_vector (31 downto 0);
 EXMEM_Rdst_OUT :out  std_logic_vector (31 downto 0);
 EXMEM_Rsrc2_OUT :out  std_logic_vector (31 downto 0);
@@ -240,7 +243,7 @@ COMPONENT MemoryEnt IS
             Clk,Enable: IN std_logic;
 
             -- Signals
-            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            ControlSignals : IN std_logic_vector(27 DOWNTO 0);
             Int,Call: IN std_logic;
 
             -- Addresses 
@@ -271,7 +274,7 @@ COMPONENT MemoryEnt IS
             MemOut: OUT std_logic_vector(31 DOWNTO 0);
             SPOut: OUT std_logic_vector(31 DOWNTO 0);
             ALUResultOut: OUT std_logic_vector(31 DOWNTO 0);
-            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0);
+            ControlSignalsOut :OUT std_logic_vector(27 DOWNTO 0);
             OPCODEOut:Out std_logic_vector(4 DOWNTO 0)
 
         );
@@ -283,7 +286,7 @@ COMPONENT MemBufferEnt IS
     PORT ( 
             -- Inputs
             Clk,Reset,Enable : IN std_logic;
-            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            ControlSignals : IN std_logic_vector(27 DOWNTO 0);
             SP,MemOut,ALUResult : IN std_logic_vector(31 DOWNTO 0);
 
             RDesData  : IN std_logic_vector(31 DOWNTO 0);
@@ -304,7 +307,7 @@ COMPONENT MemBufferEnt IS
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
             
 
-            ControlSignalsOut: OUT std_logic_vector(26 DOWNTO 0);
+            ControlSignalsOut: OUT std_logic_vector(27 DOWNTO 0);
             SPOut,MemOutOut,ALUResultOut : OUT std_logic_vector(31 DOWNTO 0);
 
             OP_CODE_OUT : OUT std_logic_vector(4 DOWNTO 0)
@@ -319,7 +322,7 @@ COMPONENT WBEnt IS
             Clk,Enable: IN std_logic;
 
             -- Signals
-            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            ControlSignals : IN std_logic_vector(27 DOWNTO 0);
             Int: IN std_logic;
 
             -- SP 
@@ -343,7 +346,7 @@ COMPONENT WBEnt IS
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
 
-            ControlSignalsOut : OUT std_logic_vector(26 DOWNTO 0);
+            ControlSignalsOut : OUT std_logic_vector(27 DOWNTO 0);
             IntOut : OUT std_logic;
             Mux10Out, SPOut : OUT std_logic_vector(31 DOWNTO 0)
 
@@ -417,9 +420,15 @@ COMPONENT TriStateSPEnt is
 END COMPONENT;
 
 -----------------------------------------------------------------------
-
+signal MAIN_INTERRUPT : std_logic := '0';
 --------------------   SIGNALS   ------------------------
+signal FS_IR :  std_logic_vector (31 downto 0) ;
+signal FS_PC :  std_logic_vector (31 downto 0);
+--------------------    IF/ID   ----------------------------
+signal IFID_IR :  std_logic_vector (31 downto 0);
+signal IFID_PC :  std_logic_vector (31 downto 0);
 
+--------------------------------------------------------
 --------------------    CU   ----------------------------
 signal CU_OUT_SIG : std_logic ;
 signal CU_IN_SIG : std_logic ;
@@ -448,7 +457,7 @@ signal CU_FLUSH_JZ : std_logic ;
 ------------------------------------------------------------
 
 --------------------    ID/EX   ----------------------------
-signal IDEX_OUT_CONTROL_SIGNALS : std_logic_vector (26 downto 0);
+signal IDEX_OUT_CONTROL_SIGNALS : std_logic_vector (27 downto 0);
 signal IDEX_PC_OUT :  std_logic_vector (31 downto 0);
 signal IDEX_Rdst_OUT :  std_logic_vector (31 downto 0);
 signal IDEX_Rsrc1_OUT :  std_logic_vector (31 downto 0);
@@ -481,13 +490,7 @@ signal DS_RD_DATA_1_OUT,DS_RD_DATA_2_OUT : std_logic_vector (31 downto 0);
 signal GLOBAL_PC :  std_logic_vector (31 downto 0);
 signal ZERO_LOGIC_16 : std_logic_vector(15 downto 0):="0000000000000000";
 ------------------------------------------------------------
-
---------------------    IF/ID   ----------------------------
-signal IFID_IR :  std_logic_vector (31 downto 0);
-signal IFID_PC :  std_logic_vector (31 downto 0);
-signal FS_IR :  std_logic_vector (31 downto 0);
-signal FS_PC :  std_logic_vector (31 downto 0);
-------------------------------------------------------------
+----
 
 -------------------Hazard detection unit----------------------
 Signal Hazard_Detection_Stall,
@@ -496,7 +499,7 @@ Signal Hazard_Detection_Stall,
 ---------------------Execute Stage----------------------------
 --Execute Stage output
 SIGNAL EXMEM_ALU_RESULT : std_logic_vector(31 DOWNTO 0);
-SIGNAL EXMEM_CONTROL_SIGNALS : std_logic_vector(26 DOWNTO 0);
+SIGNAL EXMEM_CONTROL_SIGNALS : std_logic_vector(27 DOWNTO 0);
 SIGNAL EXMEM_PC  : std_logic_vector(31 DOWNTO 0);
 SIGNAL EXMEM_Rdst  : std_logic_vector(31 DOWNTO 0);
 SIGNAL EXMEM_Rsrc2  : std_logic_vector(31 DOWNTO 0);
@@ -521,10 +524,10 @@ SIGNAL In_Port: std_logic_vector (31 downto 0) ;
 SIGNAL Execute_EN : std_logic ; 
 
 ---------------------------------------------------------------
-
+signal IFID_INTR : std_logic;
 -----------------------EX MEM Buffer------------------------------
 SIGNAL EXMEM_ALU_RESULT_OUT: std_logic_vector(31 DOWNTO 0);
-SIGNAL EXMEM_CONTROL_SIGNALS_OUT : std_logic_vector(26 DOWNTO 0);
+SIGNAL EXMEM_CONTROL_SIGNALS_OUT : std_logic_vector(27 DOWNTO 0);
 SIGNAL EXMEM_PC_OUT : std_logic_vector(31 DOWNTO 0);
 SIGNAL EXMEM_Rdst_OUT : std_logic_vector(31 DOWNTO 0);
 SIGNAL EXMEM_Rsrc2_OUT : std_logic_vector(31 DOWNTO 0);
@@ -548,7 +551,7 @@ SIGNAL RSrcOut2Memory : std_logic_vector(2 DOWNTO 0);
 SIGNAL MemOutMemory: std_logic_vector(31 DOWNTO 0);
 SIGNAL SPOutMemory: std_logic_vector(31 DOWNTO 0);
 SIGNAL ALUResultOutMemory: std_logic_vector(31 DOWNTO 0);
-SIGNAL ControlSignalsOutMemory: std_logic_vector(26 DOWNTO 0);
+SIGNAL ControlSignalsOutMemory: std_logic_vector(27 DOWNTO 0);
 SIGNAL MEMSTAGE_OPCODE_OUT: std_logic_vector(4 DOWNTO 0);
 
 ----------------------- Memory Buffer ------------------------
@@ -559,7 +562,7 @@ SIGNAL RDesOutBuffer : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut1Buffer : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut2Buffer : std_logic_vector(2 DOWNTO 0);
 
-SIGNAL ControlSignalsOutBuffer : std_logic_vector(26 DOWNTO 0);
+SIGNAL ControlSignalsOutBuffer : std_logic_vector(27 DOWNTO 0);
 SIGNAL SPOutBuffer : std_logic_vector(31 DOWNTO 0);
 SIGNAL MemOutBuffer: std_logic_vector(31 DOWNTO 0);
 SIGNAL ALUResultOutBuffer : std_logic_vector(31 DOWNTO 0);
@@ -573,7 +576,7 @@ SIGNAL RDesOutWB : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut1WB : std_logic_vector(2 DOWNTO 0);
 SIGNAL RSrcOut2WB : std_logic_vector(2 DOWNTO 0);
 
-SIGNAL ControlSignalsOutWB : std_logic_vector(26 DOWNTO 0);
+SIGNAL ControlSignalsOutWB : std_logic_vector(27 DOWNTO 0);
 SIGNAL Mux10OutWB : std_logic_vector(31 DOWNTO 0);
 SIGNAL SPOutWB : std_logic_vector(31 DOWNTO 0);
 SIGNAL IntOutWB : std_logic;
@@ -581,7 +584,7 @@ SIGNAL IntOutWB : std_logic;
 SIGNAL SPSignal : std_logic;
 
 ----------------------------- Test ----------------------------------
-SIGNAL ControlSignalSignal : std_logic_vector(26 downto 0);
+SIGNAL ControlSignalSignal : std_logic_vector(27 downto 0);
 
 --------------------------------
 signal STALL_TO_FECTH_COMPELETE : std_logic ; 
@@ -614,7 +617,7 @@ FETCH_STAGE_INSTANCE : fetch_stage port map(
     read_data_1 =>DS_RD_DATA_1_OUT(15 downto 0),
     predicted_branch_address => ZERO_LOGIC_16,
     miss_prediction => '0',
-    int_fsm => '0',
+    int_fsm => MAIN_INTERRUPT,
     func =>IS_RET,
     branch => BranchFetch,
     branch_prediction => '0',
@@ -635,7 +638,9 @@ FETCH_BUFFER_INSTANCE : fetch_buffer port map (
     PC_enable =>   Hazard_Detection_IF_ID_WR_EN,
     PC_reset =>GLOBAL_RESET,
     PC_in => FS_PC,
-    PC_out	 => IFID_PC
+    PC_out	 => IFID_PC,
+    INT_in 	=>MAIN_INTERRUPT,
+    INT_out	=> IFID_INTR
 );
 ------------------------------------------------------------------
 CONTROL_UNIT_INSTANCE : control_unit port map (
@@ -736,6 +741,7 @@ ID_EX_INSTANCE : ID_EX port map (
     FLUSH_FUNC          => CU_FLUSH_FUNC, 
     FLUSH_JZ            => CU_FLUSH_JZ,
     IR_OPCODE           => IFID_IR(31 downto 27),
+    INTR 		=> IFID_INTR,
     -- OUTPUTS
     OUT_CONTROL_SIGNALS => IDEX_OUT_CONTROL_SIGNALS,
     PC_OUT              => IDEX_PC_OUT,

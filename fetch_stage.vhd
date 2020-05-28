@@ -43,7 +43,7 @@ end component;
    signal full_reset : std_logic;
    signal hold_to_complete : std_logic; 
    signal is_reset : std_logic;
-
+   signal is_interrupt : std_logic ;
 begin
 full_reset <= initial or reset;
 ram : ins_ram port map(initial,Clk,'0','1',PC,(others => '0'),bit_IR_16);  
@@ -66,12 +66,14 @@ IR_enable <= '1';
 IR_reset <= '0';
 PC_enable <= '1';
 PC_reset <= '0';
+is_interrupt <= '0';
 else
 if hold_to_complete = '0' then    
     if miss_prediction ='1' then  
         PC <= correct_branch_address;
     elsif int_fsm = '1' then
-        PC <= address2;
+        PC <= "00000000000000000000000000000010";
+	is_interrupt <= '1';
     elsif func = '1' then
         PC <= "0000000000000000"&mux8_output;
     elsif branch = '1' then
@@ -106,7 +108,10 @@ elsif func = '1' then
 end if;
 end if;
 else if (falling_edge(clk)) then
-      if(hold_to_complete = '0')then 
+      if(is_interrupt='1')then 
+            PC<= "0000000000000000"&bit_IR_16;
+            is_interrupt<='0';
+      elsif(hold_to_complete = '0')then 
         IR <=  bit_IR_16 & "0000000000000000" ;    
         if(is_reset='1')then 
             PC<= "0000000000000000"&bit_IR_16;

@@ -6,7 +6,7 @@ USE ieee.std_logic_arith.all;
 entity Execute_Stage_Entity is 
 port(
 --ID/EX INPUTS
-IDEX_CONTROL_SIGNALS :in std_logic_vector (26 downto 0);
+IDEX_CONTROL_SIGNALS :in std_logic_vector (27 downto 0);
 IDEX_PC :in  std_logic_vector (31 downto 0);
 IDEX_Rdst :in  std_logic_vector (31 downto 0);
 IDEX_Rsrc1 :in  std_logic_vector (31 downto 0);
@@ -19,7 +19,7 @@ ID_EX_OPCODE : in std_logic_vector (4 downto 0);
 
 --EX/MEM Outputs
 EXMEM_ALU_RESULT:out  std_logic_vector (31 downto 0);
-EXMEM_CONTROL_SIGNALS :out std_logic_vector (26 downto 0);
+EXMEM_CONTROL_SIGNALS :out std_logic_vector (27 downto 0);
 EXMEM_PC :out  std_logic_vector (31 downto 0);
 EXMEM_Rdst :out  std_logic_vector (31 downto 0);
 EXMEM_Rsrc2 :out  std_logic_vector (31 downto 0);

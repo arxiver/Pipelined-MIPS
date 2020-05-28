@@ -14,7 +14,7 @@ ENTITY MemoryEnt IS
             Clk,Enable: IN std_logic;
 
             -- Signals
-            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            ControlSignals : IN std_logic_vector(27 DOWNTO 0);
             Int,Call: IN std_logic;
 
             -- Addresses 
@@ -45,7 +45,7 @@ ENTITY MemoryEnt IS
             MemOut: OUT std_logic_vector(n-1 DOWNTO 0);
             SPOut: OUT std_logic_vector(n-1 DOWNTO 0);
             ALUResultOut: OUT std_logic_vector(n-1 DOWNTO 0);
-            ControlSignalsOut :OUT std_logic_vector(26 DOWNTO 0);
+            ControlSignalsOut :OUT std_logic_vector(27 DOWNTO 0);
             OPCODEOut:Out std_logic_vector(4 DOWNTO 0)
 
         );

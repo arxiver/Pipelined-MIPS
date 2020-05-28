@@ -13,7 +13,9 @@ port(
     PC_enable :in std_logic;
     PC_reset : in std_logic;
     PC_in : in std_logic_vector(31 downto 0);
-    PC_out	: out std_logic_vector(31 downto 0)    
+    PC_out	: out std_logic_vector(31 downto 0);
+    INT_in : in std_logic;
+    INT_out : out std_logic
 );
 end entity;
 architecture fetch_buffer_arch of fetch_buffer is
@@ -26,6 +28,14 @@ architecture fetch_buffer_arch of fetch_buffer is
         q	: out std_logic_vector(n-1 downto 0)
     );
     end component;   
+component regonebit is 
+port(	clk : in std_logic ; 
+	reset : in std_logic ; 
+	enable : in std_logic ; 
+	d	: in std_logic;
+	q	: out std_logic
+);
+end component;
     signal reset_IR_full : std_logic;
     signal enable_IR_full :std_logic;
     signal reset_PC_full : std_logic;
@@ -38,5 +48,6 @@ architecture fetch_buffer_arch of fetch_buffer is
     IR :reg generic map(n => 32)       
         port map(clk,reset_IR_full,enable_IR_full,IR_in,IR_out);
     PC :reg generic map(n => 32)       
-        port map(clk,reset_PC_full,enable_PC_full,PC_in,PC_out);
+        port map(clk,reset_PC_full,enable_PC_full,PC_in,PC_out); 
+    INTERRUPT_REG : regonebit port map(clk,reset_global,enable_global,INT_in,INT_out);
 end architecture;

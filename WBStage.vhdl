@@ -14,7 +14,7 @@ ENTITY WBEnt IS
             Clk,Enable: IN std_logic;
 
             -- Signals
-            ControlSignals : IN std_logic_vector(26 DOWNTO 0);
+            ControlSignals : IN std_logic_vector(27 DOWNTO 0);
             Int: IN std_logic;
 
             -- SP 
@@ -39,7 +39,7 @@ ENTITY WBEnt IS
             RSrcOut1 : OUT std_logic_vector(2 DOWNTO 0);
             RSrcOut2 : OUT std_logic_vector(2 DOWNTO 0);
 
-            ControlSignalsOut : OUT std_logic_vector(26 DOWNTO 0);
+            ControlSignalsOut : OUT std_logic_vector(27 DOWNTO 0);
             IntOut : OUT std_logic;
             Mux10Out, SPOut : OUT std_logic_vector(n-1 DOWNTO 0)
             -- WRE : OUT std_logic
