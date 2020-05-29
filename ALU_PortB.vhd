@@ -28,8 +28,8 @@ begin
     F <= Fbuffer;
 
     
-    FlagsOut(2) <= Data1(1) when  S="010"  --shift left
-    else Data1(1) when S = "011" --shift right 
+    FlagsOut(2) <= Data1(32 -  to_integer(unsigned(Data2))) when  S="010" and   to_integer(unsigned(Data2)) < 32  and to_integer(unsigned(Data2)) > 0 --shift left
+    else Data1( to_integer(unsigned(Data2)) - 1) when S = "011" and  to_integer(unsigned(Data2)) < 33 and to_integer(unsigned(Data2)) > 1 --shift right 
     else FlagsIn(2) ;
       
 

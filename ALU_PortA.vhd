@@ -1,7 +1,11 @@
 
 LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-USE ieee.std_logic_arith.all;
+use IEEE.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_textio.all;
+use std.textio.all;
+
 
 entity ALU_PortA_Entity is 
 port(
@@ -55,10 +59,10 @@ F_Buffer <= (DATA1_BAR)   When S = "000"  -- NOT
 	
     F <= F_Buffer;
 
-Cout_SUB <= '1' when S = "100" and Data2 > Data1
+Cout_SUB <= '1' when S = "100" and to_integer(signed(Data2)) < to_integer(signed(Data1))
 	else '0';
 
-Cout_DEC <= '1' when S = "010" and Data1 = "00000000000000000000000000000000"
+Cout_DEC <= '1' when S = "010" and to_integer(signed(Data1)) <= 0
 	else '0';
 
    --carry flag
