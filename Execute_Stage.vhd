@@ -39,8 +39,8 @@ Forwarding_Selectors2 : in std_logic_vector (1 downto 0) ;
 In_Port: in std_logic_vector (31 downto 0) ;
 
 --flags
-FlagsIn : in std_logic_vector (2 downto 0)  ; 
-FlagsOut : out std_logic_vector (2 downto 0)  ; 
+FlagsIn : in std_logic_vector (2 downto 0)  :=(others => '0'); 
+FlagsOut : out std_logic_vector (2 downto 0)   :=(others => '0'); 
 
 --clk , enable , reset
 clk,
@@ -94,13 +94,13 @@ end component ALU_SRC2_MUX_Entity;
 
 --signals
 signal Src1_Mux_Output,Src2_Mux_Output : std_logic_vector(31 downto 0);
-
+signal PC_Flags, ALU_FLAGS_OUT : std_logic_vector(2 downto 0);
 begin
 --------------------------------------------------------------------------------
 -------------------------------beginning Architecture---------------------------
 --------------------------------------------------------------------------------
 --EX/MEM Outputs
-EXMEM_PC  <= IDEX_PC;  --Forwarding PC value to next buffer
+
 EXMEM_Rdst <= IDEX_Rdst; --Forwarding R dst value to next buffer
 EXMEM_Rsrc2 <= IDEX_Rsrc2; --Forwarding Rsrc2 value to next buffer
 EXMEM_Rdst_address  <= IDEX_Rdst_address; --Forwarding Rdst address to next buffer
@@ -108,6 +108,33 @@ EXMEM_Rsrc1_address <= IDEX_Rsrc1_address; --Forwarding Rsrc1 address to next bu
 EXMEM_Rsrc2_address <= IDEX_Rsrc2_address; --Forwarding Rsrc2 address to next buffer
 EXMEM_CONTROL_SIGNALS <= IDEX_CONTROL_SIGNALS; --Forwarding Control signals to next buffer
 EX_MEM_OPCODE <= ID_EX_OPCODE;--Forwarding OpCode to next buffer
+
+
+PC_Flags(2) <= '0' when FlagsIn(2) = 'X' or FlagsIn(2) = 'U'
+else FlagsIn(2);
+
+PC_Flags(1) <= '0'
+when FlagsIn(1) = 'X' or FlagsIn(1) = 'U'
+else FlagsIn(1);
+
+PC_Flags(0) <= '0'
+when FlagsIn(0) = 'X' or FlagsIn(0) = 'U'
+else FlagsIn(0);
+------------------------------------------
+FlagsOut(2) <= '0' when ALU_FLAGS_OUT(2) = 'X' or ALU_FLAGS_OUT(2) = 'U'
+else ALU_FLAGS_OUT(2);
+
+FlagsOut(1) <= '0'
+when ALU_FLAGS_OUT(1) = 'X' or ALU_FLAGS_OUT(1) = 'U'
+else ALU_FLAGS_OUT(1);
+
+FlagsOut(0) <= '0'
+when ALU_FLAGS_OUT(0) = 'X' or ALU_FLAGS_OUT(0) = 'U'
+else ALU_FLAGS_OUT(0);
+
+EXMEM_PC  <= IDEX_PC
+when IDEX_CONTROL_SIGNALS(27) = '0'
+else PC_Flags&IDEX_PC(28 downto 0);
 
 --Mux selecting input #1 to the ALU
 Mux1      : ALU_SRC1_MUX_Entity port map (IDEX_Rsrc1 ,    --R source 1
@@ -132,8 +159,8 @@ ALU_Label : ALU_ENTITY          port map (Src1_Mux_Output , --MUX1 OUTPUT
                                           Src2_Mux_Output , --MUX2 OUTPUT
                                           IDEX_CONTROL_SIGNALS(5 downto 2), --ALU OP CODE 
                                           IDEX_CONTROL_SIGNALS(11) , --ENABLE
-                                          FlagsIn , --FLAGSIn
-					  FlagsOut,
+                                          PC_Flags , --FLAGSIn
+					  ALU_FLAGS_OUT,
                                           EXMEM_ALU_RESULT); --OUTPUT
 
 

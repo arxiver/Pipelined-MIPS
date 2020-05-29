@@ -617,7 +617,7 @@ SIGNAL SPSofyan : std_logic_vector(31 DOWNTO 0) := "0000000000000000000011111010
 Signal BranchFetch , IS_RET,IS_RTI : std_logic;
 
 Signal FlagsWrEnable  : std_logic;
-Signal  FlagsInput ,FlagsOutput,ExecuteStageFlags : std_logic_vector(2 downto 0);
+Signal  FlagsInput ,FlagsOutput,ExecuteStageFlags : std_logic_vector(2 downto 0) :=(others => '0');
 
 begin
 BranchFetch <= '1'

@@ -73,11 +73,15 @@ if hold_to_complete = '0' then
         PC <= correct_branch_address;
     elsif int_fsm = '1' then
         PC <= "00000000000000000000000000000010";
+	IR <= "00000000000000000000000000000000";
 	is_interrupt <= '1';
     elsif func = '1' then
         PC <= "0000000000000000"&mux8_output;
-    elsif branch = '1' then
+    elsif branch = '1' and read_data_1 < 4000  then
         PC <= "0000000000000000"&read_data_1;
+	IR <= "00000000000000000000000000000000";
+   elsif branch = '1' and read_data_1 > 4000  then
+   	 PC<=(OTHERS => '0' );
 	IR <= "00000000000000000000000000000000";
     elsif branch_prediction ='1'  then
         PC <= predicted_branch_address;
@@ -96,10 +100,14 @@ if hold_to_complete = '0' then
  elsif falling_edge(stalling) then
 	--PC <= PC + 1; 
 	hold_to_complete <= '1';
-elsif branch = '1' then
+  elsif branch = '1' and read_data_1 < 4000  then
         PC <= "0000000000000000"&read_data_1;
 	IR <= "00000000000000000000000000000000";
 	hold_to_complete <= '0';
+   elsif branch = '1' and read_data_1 > 4000  then
+   	 PC<=(OTHERS => '0' );
+	 IR <= "00000000000000000000000000000000";
+	 hold_to_complete <= '0';
 elsif func = '1' then
         PC <= "0000000000000000"&mux8_output;
 	hold_to_complete <= '0';
