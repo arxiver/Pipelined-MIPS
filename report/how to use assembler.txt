@@ -1,0 +1,8 @@
+1-make sure you have python 3 installed
+2-place the assembly file into the directory of the software (assembler_software.py)
+3-open cmd/terminal in the directory of the assembler and type "python assembler_software.py" 
+4-it will ask you to type the input file name 
+5- output will be written in the same directory with the same name + "_out"
+6-Rename it to IR.txt and move it to "project\Pipelined-MIPS" directory and open "Generic do file.txt" to run the cpu
+7-in modelsim keep pressing run after beginning simulation
+8-you can find required test cases and their "IR.txt" and "Do file.txt" in the same directory
